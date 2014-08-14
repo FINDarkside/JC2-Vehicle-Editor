@@ -4,3 +4,6 @@
 /test/
 /nbproject/
 /Dropzone/
+manifest.mf
+build.xml
+test.png
