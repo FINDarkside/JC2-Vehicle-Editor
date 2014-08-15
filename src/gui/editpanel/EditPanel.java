@@ -51,5 +51,7 @@ public abstract class EditPanel extends JPanel{
 
     }
     
-    public abstract List<String> getXml();
+    public List<String> getXml(){
+        return null;
+    }
 }

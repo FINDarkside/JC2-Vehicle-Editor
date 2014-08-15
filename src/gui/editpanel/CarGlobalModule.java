@@ -31,9 +31,5 @@ public class CarGlobalModule extends EditPanel {
 
     }
 
-    @Override
-    public List<String> getXml() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 
 }

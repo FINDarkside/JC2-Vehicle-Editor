@@ -52,18 +52,20 @@ public class Logic {
         File test = new File(currentPath + "\\Files\\Vehicles\\Cars\\lave.v035_sport_custom.eez");
         loadFile(test);
 
-        StackTracePrinter.handle(new FileNotFoundException("OÖSDA"));
 
     }
 
     public boolean loadFile(File f) {
-        File unpacked;
+        File unpacked = null;
         Project test;
         try {
             unpacked = FileTools.smallUnpack(f);
             unpacked = FileTools.moveFile(unpacked, savePath);
             test = new Project(unpacked);
         } catch (IOException | InterruptedException e) {
+            if(unpacked != null){
+                FileTools.deleteFolder(unpacked);
+            }
             StackTracePrinter.handle(e);
             return false;
         }

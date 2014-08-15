@@ -1,5 +1,6 @@
 package logic;
 
+import com.sun.corba.se.impl.presentation.rmi.ExceptionHandler;
 import gui.editpanel.CarGlobalModule;
 import gui.editpanel.EditPanel;
 import jtools.FileTools;
@@ -29,6 +30,9 @@ public class Project {
     private int modulesIndex;
 
     public Project(File file) throws IOException, InterruptedException {
+        
+        String s = null;
+        s.split("sd");
 
         this.file = file;
         

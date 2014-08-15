@@ -21,7 +21,6 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import logic.FuckThisShitException;
 import logic.StackTracePrinter;
 
 /**
@@ -48,12 +47,15 @@ public class MainForm extends javax.swing.JFrame {
             StackTracePrinter.handle(e);
         }
 
+
         logic.setForm(this);
 
         initComponents();
         customInit();
 
         setIcons();
+
+        logic.test();
 
     }
 
@@ -178,8 +180,8 @@ public class MainForm extends javax.swing.JFrame {
 
     private void customInit() {
         jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
-        
-            initPictureContainer();
+
+        initPictureContainer();
 
         UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "/Files/Icons/new.png"));
 
@@ -195,9 +197,9 @@ public class MainForm extends javax.swing.JFrame {
     public void initPictureContainer() {
         ImageContainer i;
 
-        try{
-        i = new ImageContainer((BufferedImage) (ImageIO.read(new File("test.png"))));
-        } catch(IOException e){
+        try {
+            i = new ImageContainer((BufferedImage) (ImageIO.read(new File("test.png"))));
+        } catch (IOException e) {
             StackTracePrinter.handle(e);
             i = new ImageContainer();
         }
@@ -261,15 +263,24 @@ public class MainForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        try {
-            java.awt.EventQueue.invokeLater(new Runnable() {
-                public void run() {
-                    new MainForm().setVisible(true);
-                }
-            });
-        } catch (Exception e) {
-            System.out.println("PÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ");
-        }
+        setupGlobalExceptionHandling();
+
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new MainForm().setVisible(true);
+            }
+        });
+        
+
+    }
+
+    public static void setupGlobalExceptionHandling() {
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                StackTracePrinter.handle((Exception) e);
+            }   
+        });
     }
 
     private javax.swing.JPanel editPanelContainer;
