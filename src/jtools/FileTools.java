@@ -1,5 +1,3 @@
-
-
 package jtools;
 
 import java.awt.FileDialog;
@@ -31,32 +29,19 @@ public class FileTools {
     private static final String currentPath = Paths.get("").toAbsolutePath().toString();
     private static final String dictionaryPath = currentPath + "/Files/Dictionary";
 
-    private static void alertError(String str) {
-        JOptionPane.showMessageDialog(null,
-                "Error in class FileTools | method " + str,
-                "ERROR",
-                JOptionPane.ERROR_MESSAGE);
+    public static ArrayList<String> readFile(File file) throws IOException {
 
-    }
+        ArrayList<String> result = new ArrayList<>();
 
-    public static ArrayList<String> readFile(File file) {
-        try {
-            ArrayList<String> result = new ArrayList<>();
-            BufferedReader reader;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-
-            String str;
-            while ((str = reader.readLine()) != null) {
-
-                result.add(str);
-            }
-            reader.close();
-            return result;
-        } catch (IOException ex) {
-            alertError("readfile\n" + ex.getMessage());
-            return null;
+        String str;
+        while ((str = reader.readLine()) != null) {
+            result.add(str);
         }
+        reader.close();
+        return result;
+
     }
 
     public static File changeFileExtension(File f, String ext) {
@@ -68,94 +53,72 @@ public class FileTools {
         return f;
     }
 
-    public static File renameFile(File f, String name) {
+    public static File renameFile(File f, String name) throws IOException {
         File newFile = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf('\\') + 1) + name);
-        if(newFile.exists()){
+        if (newFile.exists()) {
             deleteFolder(newFile);
         }
-
-        
         if (!f.renameTo(newFile)) {
-            alertError("renameFile\n Can't rename " + f.getAbsolutePath());
-            return null;
+            throw new IOException("Renaming " + f.getName() + " to " + newFile.getName() + " failed.");
         }
         return newFile;
     }
 
-    public static File moveFile(File f, File destination) {
+    public static File moveFile(File f, File destination) throws IOException {
 
         File newFile = new File(destination.getAbsolutePath() + "\\" + f.getName());
         if (newFile.exists()) {
             deleteFolder(newFile);
         }
-        try {
-            Files.move(f.toPath(), newFile.toPath(), REPLACE_EXISTING);
-        } catch (IOException ex) {
-            alertError("moveFile\n" + ex.getMessage());
-        }
+
+        Files.move(f.toPath(), newFile.toPath(), REPLACE_EXISTING);
+
         return newFile;
     }
 
-    public static boolean overWrite(File f, List file) {
+    public static void overWrite(File f, List file) throws IOException {
 
         if (!f.exists()) {
-            try {
-                f.createNewFile();
-            } catch (IOException ex) {
-                alertError("overWrite\n" + ex.getMessage());
-                return false;
-            }
+            f.createNewFile();
         }
-        try {
-            PrintWriter writer = new PrintWriter(f, "UTF-8");
-            for (int i = 0; i < file.size(); i++) {
-                writer.println(file.get(i));
-            }
-            writer.close();
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-            alertError("overWrite\n" + e.getMessage() + "\nTrying to overwrite: " + f.getAbsolutePath());
-            return false;
+
+        PrintWriter writer = new PrintWriter(f, "UTF-8");
+        for (int i = 0; i < file.size(); i++) {
+            writer.println(file.get(i));
         }
-        return true;
+        writer.close();
     }
 
-    public static File convert(File file) {
+    public static File convert(File file) throws IOException, InterruptedException {
 
         File binConverter = new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.BinConvert.exe");
 
         if (!binConverter.exists()) {
-            alertError("convert\nGibbedsTools is missing, it should be in\n" + currentPath + "\\GibbedsTools\\Gibbed.Avalanche.BinConvert.exe");
-            return null;
+            throw new FileNotFoundException(binConverter.getAbsolutePath() + " does not exist");
         }
 
         if (!file.exists()) {
-            alertError("convert\nFile does not exist\n" + file.getAbsolutePath());
+            throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
         }
 
         String name = file.getName();
         String extension = name.substring(name.lastIndexOf(".") + 1, name.length());
 
         Process p;
-        try {
-            p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + binConverter.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
-            p.waitFor();
-        } catch (IOException | InterruptedException ex) {
-            alertError("convert\n" + ex.getMessage());
-            return null;
-        }
-            
-        
+        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + binConverter.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
+        p.waitFor();
+
         File file2 = changeFileExtension(file, extension.equals("xml") ? "bin" : "xml");
 
-        if (p.exitValue() != 0) {
-            alertError("convert\nBinConverter crashed\nExit value: " + p.exitValue());
-            return null;
+        int exVal = p.exitValue();
+        if (exVal != 0) {
+            throw new RuntimeException(binConverter.getName() + " returned " + exVal);
         }
 
         return file2;
     }
 
-    public static File getFile(String ext, String startPath) {
+    public static File chooseFile(String ext, String startPath) {
 
         java.awt.Frame f = null;
         FileDialog fc = new FileDialog(f, "Select file");
@@ -172,7 +135,7 @@ public class FileTools {
         return file;
     }
 
-    public static String getPath(String startPath) {
+    public static String choosePath(String startPath) {
 
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -188,12 +151,8 @@ public class FileTools {
 
             file = fc.getSelectedFile();
             if (!file.isDirectory()) {
-                alertError("getPath\nSelect a folder");
+                JOptionPane.showMessageDialog(null, "Select a folder");
             }
-            if (!file.canWrite()) {
-                alertError("getPath\nCan't write to direcory " + file.getAbsolutePath() + "select another folder or run this program as administrator.");
-            }
-
         } while (!file.isDirectory());
 
         return file.getAbsolutePath();
@@ -213,13 +172,13 @@ public class FileTools {
     }
 
     public static void deleteFolder(File folder) {
-      
-        if(folder.isFile()){
+
+        if (folder.isFile()) {
             folder.delete();
             return;
         }
 
-        for (File file : folder.listFiles()) {  
+        for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 deleteFolder(file);
             } else {
@@ -229,25 +188,18 @@ public class FileTools {
         folder.delete();
     }
 
-    public static File smallUnpack(File file) {
+    public static File smallUnpack(File file) throws FileNotFoundException, IOException, InterruptedException {
         if (!file.exists()) {
-            alertError("smallUnpack\n " + file.getAbsolutePath() + " does not exist");
-            return null;
+            throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
         }
         File smallUnpack = new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallUnpack.exe");
         if (!smallUnpack.exists()) {
-            alertError("smallUnpack\nGibbedsTools SmallUnpack is missing");
-            return null;
+            throw new FileNotFoundException(smallUnpack.getAbsolutePath() + " does not exist");
         }
 
         Process p;
-        try {
-            p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() +"\" \"" + file.getAbsolutePath() + "\"\"");
-            p.waitFor();
-        } catch (IOException | InterruptedException ex) {
-            alertError("smallUnpack\n" + ex.getMessage());
-            return null;
-        }
+        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
+        p.waitFor();
 
         File result = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1) + file.getName().substring(0, file.getName().lastIndexOf('.')) + "_unpack");
         result = renameFile(result, result.getName().substring(0, result.getName().lastIndexOf('_')));
@@ -255,26 +207,21 @@ public class FileTools {
         return result;
     }
 
-    public static File smallPack(File file) {
-        
+    public static File smallPack(File file) throws IOException, InterruptedException {
+        File smallPack = new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe");
+
         if (!file.exists()) {
-            alertError("smallPack\n " + file.getAbsolutePath() + " does not exist");
+            throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
         }
-        if (!new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe").exists()) {
-            alertError("smallPack\nGibbedsTools SmallPack is missing");
+        if (smallPack.exists()) {
+            throw new FileNotFoundException(smallPack.getAbsolutePath() + " does not exist");
         }
 
         Process p;
-        try {
-            p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe\" \"" + file.getAbsolutePath() + "\"\"");
-            p.waitFor();
-        } catch (IOException | InterruptedException ex) {
-            alertError("smallPack\n" + ex.getMessage());
-            return null;
-        }
-        
-        
-        File result = new File(file.getAbsolutePath()+".sarc");
+        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe\" \"" + file.getAbsolutePath() + "\"\"");
+        p.waitFor();
+
+        File result = new File(file.getAbsolutePath() + ".sarc");
         return renameFile(result, changeFileExtension(result, "eez").getName());
     }
 

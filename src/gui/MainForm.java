@@ -21,6 +21,8 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import logic.FuckThisShitException;
+import logic.StackTracePrinter;
 
 /**
  *
@@ -28,7 +30,7 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class MainForm extends javax.swing.JFrame {
 
-    private Logic logic = new Logic();
+    private Logic logic;
     private final String currentPath = Paths.get("").toAbsolutePath().toString();
 
     private ImageContainer imageContainer;
@@ -37,12 +39,13 @@ public class MainForm extends javax.swing.JFrame {
      * Creates new form MainForm
      */
     public MainForm() {
+        this.logic = new Logic();
         this.getContentPane().setBackground(new Color(255, 255, 255));
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            StackTracePrinter.handle(e);
         }
 
         logic.setForm(this);
@@ -52,7 +55,6 @@ public class MainForm extends javax.swing.JFrame {
 
         setIcons();
 
-        logic.test();
     }
 
     public void setIcons() {
@@ -112,7 +114,7 @@ public class MainForm extends javax.swing.JFrame {
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(modelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(menuContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 782, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -131,6 +133,11 @@ public class MainForm extends javax.swing.JFrame {
 
         mNewFile.setText("New");
         mNewFile.setPreferredSize(null);
+        mNewFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mNewFileActionPerformed(evt);
+            }
+        });
         jMenu1.add(mNewFile);
 
         mOpenFile.setText("Open");
@@ -158,26 +165,43 @@ public class MainForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(fileChooserContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+            .addComponent(fileChooserContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
             .addComponent(mainPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void mNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mNewFileActionPerformed
+
+    }//GEN-LAST:event_mNewFileActionPerformed
+
     private void customInit() {
         jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
+        
+            initPictureContainer();
 
+        UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "/Files/Icons/new.png"));
 
-        // Initialize 
+        JTree tree = new JTree(new FileTreeModel(new File(currentPath + "\\Files\\Vehicles")));
+        Font currentFont = tree.getFont();
+        tree.setFont(new Font(currentFont.getName(), currentFont.getStyle(), currentFont.getSize() + 4));
+        tree.setRowHeight(tree.getRowHeight() + 4);
+
+        fileChooserContainer.getViewport().add(tree);
+
+    }
+
+    public void initPictureContainer() {
         ImageContainer i;
-        try {
-            i = new ImageContainer((BufferedImage) (ImageIO.read(new File("test.png"))));
-        } catch (IOException ex) {
-            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println("Fail");
-            return;
+
+        try{
+        i = new ImageContainer((BufferedImage) (ImageIO.read(new File("test.png"))));
+        } catch(IOException e){
+            StackTracePrinter.handle(e);
+            i = new ImageContainer();
         }
+
         i.setBounds(0, 0, 400, 150);
         i.setVisible(true);
         i.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -201,20 +225,10 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         modelContainer.add(b);
-
-        UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "/Files/Icons/new.png"));
-
-        JTree tree = new JTree(new FileTreeModel(new File(currentPath + "\\Files\\Vehicles")));
-        Font currentFont = tree.getFont();
-        tree.setFont(new Font(currentFont.getName(), currentFont.getStyle(), currentFont.getSize() + 4));
-        tree.setRowHeight(tree.getRowHeight() + 4);
-
-        fileChooserContainer.getViewport().add(tree);
-
     }
 
     public void setEditPanel(JPanel panel) {
-        panel.setPreferredSize(new Dimension(panel.getWidth(),jScrollPane1.getWidth()));
+        panel.setPreferredSize(new Dimension(panel.getWidth(), jScrollPane1.getWidth()));
         jScrollPane1.setViewportView(panel);
 
     }
@@ -247,11 +261,15 @@ public class MainForm extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainForm().setVisible(true);
-            }
-        });
+        try {
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    new MainForm().setVisible(true);
+                }
+            });
+        } catch (Exception e) {
+            System.out.println("PÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ");
+        }
     }
 
     private javax.swing.JPanel editPanelContainer;

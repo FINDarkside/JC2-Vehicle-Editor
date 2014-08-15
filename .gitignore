@@ -4,6 +4,7 @@
 /test/
 /nbproject/
 /Dropzone/
+/Stacktraces/
 manifest.mf
 build.xml
 test.png

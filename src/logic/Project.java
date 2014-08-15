@@ -4,6 +4,7 @@ import gui.editpanel.CarGlobalModule;
 import gui.editpanel.EditPanel;
 import jtools.FileTools;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class Project {
     
     private int modulesIndex;
 
-    public Project(File file) {
+    public Project(File file) throws IOException, InterruptedException {
 
         this.file = file;
         
@@ -39,8 +40,9 @@ public class Project {
         }
         
         this.mvdollXml = FileTools.convert(mvdoll);
-        
         List<String> xmlList = FileTools.readFile(mvdollXml);
+        
+        
         if (file.getName().contains("lave")) {
             parseLave(xmlList);
         } else if (file.getName().contains("arve")) {

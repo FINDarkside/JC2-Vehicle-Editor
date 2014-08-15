@@ -3,6 +3,7 @@
 package logic.dictionaries;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 /**
@@ -10,8 +11,13 @@ import java.nio.file.Paths;
  * @author FINDarkside
  */
 public class VehicleNames {
-    private final static Dictionary fileToName = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles"),false);
-    private final static Dictionary nameToFile = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles"),true);
+    private static Dictionary fileToName;
+    private static Dictionary nameToFile;
+    
+    public static void init() throws IOException{
+        fileToName = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles"),false);
+        nameToFile = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles"),true);
+    }
     
     public static String getName(String s){
         return fileToName.get(s);

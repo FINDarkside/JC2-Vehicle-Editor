@@ -3,6 +3,7 @@ package logic.dictionaries;
 import jtools.FileTools;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +16,12 @@ public class Dictionary {
 
     private HashMap<String, String> dictionary = new HashMap<>();
 
-    public Dictionary(File file, boolean inverted) {
+    public Dictionary(File file, boolean inverted) throws IOException {
 
         for (File f : FileTools.listFilesInFolder(file)) {
+            
             List<String> text = FileTools.readFile(f);
+            
             for (String s : text) {
                 String key, value;
                 key = s.substring(0, s.indexOf(':'));

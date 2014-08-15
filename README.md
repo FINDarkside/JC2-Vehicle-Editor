@@ -1,6 +1,6 @@
 JC2-Vehicle-Editor
 ==================
 
-Edits vehicle properties + vehicle preview and open model in blender
+Edit vehicle properties and edit model in blender
 
 Work in progress
