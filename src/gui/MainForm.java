@@ -9,14 +9,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.UIManager;
@@ -230,7 +226,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     public void setEditPanel(JPanel panel) {
-        panel.setPreferredSize(new Dimension(panel.getWidth(), jScrollPane1.getWidth()));
+        panel.setPreferredSize(new Dimension(panel.getWidth(), jScrollPane1.getHeight()));
         jScrollPane1.setViewportView(panel);
 
     }
@@ -266,6 +262,7 @@ public class MainForm extends javax.swing.JFrame {
         setupGlobalExceptionHandling();
 
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new MainForm().setVisible(true);
             }
@@ -279,6 +276,7 @@ public class MainForm extends javax.swing.JFrame {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 StackTracePrinter.handle((Exception) e);
+                System.exit(1);
             }   
         });
     }

@@ -1,20 +1,12 @@
 package logic;
 
 import gui.MainForm;
-import logic.dictionaries.Dictionary;
 import jtools.FileTools;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import jtools.XmlTools;
 import logic.dictionaries.VehicleNames;
 
 /**

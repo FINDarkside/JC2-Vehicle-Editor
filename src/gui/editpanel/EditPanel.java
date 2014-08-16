@@ -1,7 +1,5 @@
 package gui.editpanel;
 
-import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComponent;
@@ -14,7 +12,7 @@ import javax.swing.JTextField;
  * @author FINDarkside
  */
 public abstract class EditPanel extends JPanel{
-
+    
     private List<JComponent> components = new ArrayList<>();
 
     protected final static int topMargin = 5;
@@ -22,6 +20,8 @@ public abstract class EditPanel extends JPanel{
     protected final static int verticalSpace = 10; //Vertical space between elements
     protected final static int horizontalSpace = 20;
     protected final static int height = 26;
+    
+    protected List<String> text;
 
     protected int y = topMargin;
     
@@ -29,10 +29,10 @@ public abstract class EditPanel extends JPanel{
         this.setLayout(null);
     }
 
-    protected void createTextField(String s) {
+    protected void createTextField(String line) {
 
-        String key = s.substring(s.indexOf('\"') + 1, s.indexOf('\"', s.indexOf('\"') + 1));
-        String value = s.substring(s.indexOf('>') + 1, s.lastIndexOf('<'));
+        String key = line.substring(line.indexOf('\"') + 1, line.indexOf('\"', line.indexOf('\"') + 1));
+        String value = line.substring(line.indexOf('>') + 1, line.lastIndexOf('<'));
 
 
         JLabel label = new JLabel(key);
@@ -47,7 +47,7 @@ public abstract class EditPanel extends JPanel{
         
         y += field.getHeight() + verticalSpace;
         
-        this.setBounds(0, 0, 0, y);
+        this.setBounds(0, 0, 0,y);
 
     }
     

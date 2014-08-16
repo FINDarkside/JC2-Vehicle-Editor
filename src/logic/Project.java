@@ -1,6 +1,5 @@
 package logic;
 
-import com.sun.corba.se.impl.presentation.rmi.ExceptionHandler;
 import gui.editpanel.CarGlobalModule;
 import gui.editpanel.EditPanel;
 import jtools.FileTools;
@@ -9,7 +8,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import jtools.XmlTools;
 
@@ -31,8 +29,6 @@ public class Project {
 
     public Project(File file) throws IOException, InterruptedException {
         
-        String s = null;
-        s.split("sd");
 
         this.file = file;
         
@@ -64,7 +60,7 @@ public class Project {
             if(s.contains("<object name=\"_default_modules\">")){
                 this.modulesIndex = xmlList.indexOf(s);
             }
-            if (s.contains("CCarSteeringModule")) {
+            if (s.contains("CCarGlobalModule")) {
                 EditPanel panel = new CarGlobalModule(XmlTools.getElement(xmlList, xmlList.indexOf(s)-1));
                 panes.put("test", panel);
             }
