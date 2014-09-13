@@ -118,10 +118,9 @@ public class FileTools {
 
         java.awt.Frame f = null;
         FileDialog fc = new FileDialog(f, "Select file");
+        
         fc.setFile("*." + ext);
-
         fc.setDirectory(startPath);
-
         fc.setVisible(true);
 
         String directory = fc.getDirectory();

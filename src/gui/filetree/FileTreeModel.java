@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
@@ -14,6 +15,7 @@ import javax.swing.tree.TreePath;
  */
 public class FileTreeModel implements TreeModel {
 
+    private EventListenerList listeners = new EventListenerList();
     private Item root;
     private HashMap<Item, ArrayList<Item>> map = new HashMap<>();
 
@@ -24,7 +26,7 @@ public class FileTreeModel implements TreeModel {
     }
 
     private void init(File root) {
-        
+
         for (File f : root.listFiles()) {
             if (f.isFile()) {
                 map.put(new Item(f), new ArrayList<Item>());
@@ -86,23 +88,23 @@ public class FileTreeModel implements TreeModel {
         ArrayList list = map.get(item);
 
         for (int i = 0; i < list.size(); i++) {
-            if(list.get(i).equals(item2)){
+            if (list.get(i).equals(item2)) {
                 return i;
             }
         }
-        
+
         return -1;
 
     }
 
     @Override
-    public void addTreeModelListener(TreeModelListener tl) {
+    public void addTreeModelListener(TreeModelListener l) {
         
     }
 
     @Override
     public void removeTreeModelListener(TreeModelListener tl) {
-        
+
     }
 
 }

@@ -1,6 +1,7 @@
 package gui;
 
 import gui.filetree.FileTreeModel;
+import gui.filetree.SelectionListener;
 import logic.Logic;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -42,7 +43,6 @@ public class MainForm extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             StackTracePrinter.handle(e);
         }
-
 
         logic.setForm(this);
 
@@ -185,6 +185,7 @@ public class MainForm extends javax.swing.JFrame {
         Font currentFont = tree.getFont();
         tree.setFont(new Font(currentFont.getName(), currentFont.getStyle(), currentFont.getSize() + 4));
         tree.setRowHeight(tree.getRowHeight() + 4);
+        tree.addTreeSelectionListener(new SelectionListener(tree, logic));
 
         fileChooserContainer.getViewport().add(tree);
 
@@ -267,7 +268,6 @@ public class MainForm extends javax.swing.JFrame {
                 new MainForm().setVisible(true);
             }
         });
-        
 
     }
 
@@ -276,8 +276,7 @@ public class MainForm extends javax.swing.JFrame {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 StackTracePrinter.handle((Exception) e);
-                System.exit(1);
-            }   
+            }
         });
     }
 

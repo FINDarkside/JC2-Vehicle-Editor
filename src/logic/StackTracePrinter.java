@@ -1,5 +1,8 @@
 package logic;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -8,6 +11,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -37,6 +41,11 @@ public class StackTracePrinter {
             PrintWriter printWriter = new PrintWriter(stringWriter);
             e.printStackTrace(printWriter);
             String stackTrace = stringWriter.toString();
+            stackTrace = "[spoiler][code]" + stackTrace + "[/code][/spoiler]";
+
+            StringSelection stringSelection = new StringSelection(stackTrace);
+            Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clpbrd.setContents(stringSelection, null);
 
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yy");
             Date date = new Date();
@@ -50,19 +59,18 @@ public class StackTracePrinter {
                 savedFile = new File(location + "\\" + fileName + (i != 0 ? ("(" + i + ")") : "") + ".txt");
                 i++;
             } while (savedFile.exists());
-            List<String> list = new ArrayList<>();
-            list.add("<spoiler><code>\n"+stackTrace+"</code></spoiler>");
-            
+
             try {
-                FileTools.overWrite(savedFile, list);
+                FileTools.overWrite(savedFile, Arrays.asList(stackTrace));
             } catch (IOException ex) {
-                handle(e);
+                handle(ex);
             }
-            
 
-            
         }
-
+        
+        System.out.println(e.toString());
+        System.out.println("asdasd");
+        
     }
 
 }
