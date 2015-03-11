@@ -13,6 +13,8 @@ public class Settings {
     public final static String currentPath = getPath();
 
     public static File blender = null;
+    public static boolean deleteVehicleFolderOnSave = false;
+    public static boolean saveXmlInEez = true;
 
     public static void setBlender(File f) {
         blender = f;
@@ -23,22 +25,22 @@ public class Settings {
     }
 
     private static String getPath() {
-        if (currentPath != null) {
-            return currentPath;
-        }
-        String tmp;
+        String path;
         try {
-            tmp = new File(Logic.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent();
+            path = new File(Logic.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent();
         } catch (URISyntaxException ex) {
             StackTracePrinter.handle(ex);
-            return currentPath;
+            return System.getProperty("user.dir");
         }
-        if (tmp.equals("C:\\Users\\Jesse\\Java\\Omat\\JC2 Vehicle Editor\\build")) {
-            System.out.println("Jekku");
-            return currentPath;
+        if (path.equals("C:\\Users\\Jesse\\Java\\Omat\\JC2 Vehicle Editor\\build")) {
+            return "C:\\Users\\Jesse\\Java\\Omat\\JC2 Vehicle Editor";
         } else {
-            return currentPath;
+            return path;
         }
+    }
+    
+    public static void save(){
+        
     }
 
 }

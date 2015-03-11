@@ -73,47 +73,19 @@ public class FileTools {
         return newFile;
     }
 
-    public static void overWrite(File f, List file) throws IOException {
+    public static void overWrite(File f, List<String> file) throws IOException {
 
         if (!f.exists()) {
             f.createNewFile();
         }
 
         PrintWriter writer = new PrintWriter(f, "UTF-8");
-        for (int i = 0; i < file.size(); i++) {
-            writer.println(file.get(i));
+        for (String s : file) {
+            writer.println(s);
         }
         writer.close();
     }
 
-    public static File convert(File file) throws IOException, InterruptedException {
-
-        File binConverter = new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.BinConvert.exe");
-
-        if (!binConverter.exists()) {
-            throw new FileNotFoundException(binConverter.getAbsolutePath() + " does not exist");
-        }
-
-        if (!file.exists()) {
-            throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
-        }
-
-        String name = file.getName();
-        String extension = name.substring(name.lastIndexOf(".") + 1, name.length());
-
-        Process p;
-        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + binConverter.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
-        p.waitFor();
-
-        File file2 = changeFileExtension(file, extension.equals("xml") ? "bin" : "xml");
-
-        int exVal = p.exitValue();
-        if (exVal != 0) {
-            throw new RuntimeException(binConverter.getName() + " returned " + exVal);
-        }
-
-        return file2;
-    }
 
     public static File chooseFile(String ext, String startPath) {
 
@@ -126,7 +98,7 @@ public class FileTools {
 
         String directory = fc.getDirectory();
         String name = fc.getFile();
-        File file = (name != null) ? new File(directory + "/" + name) : null;
+        File file = (name != null) ? new File(directory + "\\" + name) : null;
 
         return file;
     }
@@ -184,41 +156,5 @@ public class FileTools {
         folder.delete();
     }
 
-    public static File smallUnpack(File file) throws FileNotFoundException, IOException, InterruptedException {
-        if (!file.exists()) {
-            throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
-        }
-        File smallUnpack = new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallUnpack.exe");
-        if (!smallUnpack.exists()) {
-            throw new FileNotFoundException(smallUnpack.getAbsolutePath() + " does not exist");
-        }
-
-        Process p;
-        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
-        p.waitFor();
-
-        File result = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1) + file.getName().substring(0, file.getName().lastIndexOf('.')) + "_unpack");
-        result = renameFile(result, result.getName().substring(0, result.getName().lastIndexOf('_')));
-
-        return result;
-    }
-
-    public static File smallPack(File file) throws IOException, InterruptedException {
-        File smallPack = new File(currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe");
-
-        if (!file.exists()) {
-            throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
-        }
-        if (smallPack.exists()) {
-            throw new FileNotFoundException(smallPack.getAbsolutePath() + " does not exist");
-        }
-
-        Process p;
-        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe\" \"" + file.getAbsolutePath() + "\"\"");
-        p.waitFor();
-
-        File result = new File(file.getAbsolutePath() + ".sarc");
-        return renameFile(result, changeFileExtension(result, "eez").getName());
-    }
 
 }

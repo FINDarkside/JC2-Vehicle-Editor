@@ -1,6 +1,5 @@
 package gui.editpanel;
 
-import gui.Field;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
@@ -22,19 +21,16 @@ public class EditPanel extends JPanel {
 
     protected List<String> text;
 
-    public EditPanel() {
+    public EditPanel(String name) {
+        this.setName(name);
         this.setLayout(new MigLayout("wrap 2",
                 "",
                 "30"));
     }
 
-    public void createTextField(Element e) {
-        String key = e.getAttribute("name");
-        key = key.isEmpty() ? e.getAttribute("id") : key;
-        String value = e.getTextContent();
+    public void createTextField(Element e, String name) {
 
-        JLabel label = new JLabel(key);
-
+        JLabel label = new JLabel(name);
         this.add(label);
 
         DataType dataType;
@@ -60,9 +56,15 @@ public class EditPanel extends JPanel {
         }
 
         Field field = new Field(e, dataType);
-        field.setValue(value);
+        field.setValue(e.getTextContent());
         this.add(field, "width 100:300, height 25, gapleft 10");
         components.add(field);
+    }
+
+    public void createTextField(Element e) {
+        String name = e.getAttribute("name");
+        name = name.isEmpty() ? e.getAttribute("id") : name;
+        createTextField(e, name);
     }
 
     public void save() {
@@ -74,6 +76,11 @@ public class EditPanel extends JPanel {
             }
             f.getElement().setTextContent(f.getValue().toString());
         }
+    }
+
+    @Override
+    public String toString() {
+        return this.getName();
     }
 
 }

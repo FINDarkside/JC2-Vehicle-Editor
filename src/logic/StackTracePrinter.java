@@ -17,15 +17,15 @@ import jtools.FileTools;
  */
 public class StackTracePrinter {
 
-    private static final String location = Paths.get("").toAbsolutePath().toString() + "\\Stacktraces";
+    private static final String location = Settings.currentPath + "\\Stacktraces";
 
-    public static void handle(Exception e) {
-        e.printStackTrace(System.err);
+    public static void handle(Throwable t) {
+        t.printStackTrace(System.err);
         
         Object[] options = {"Save stacktrace & copy to clipboard", "Continue"};
         int n = JOptionPane.showOptionDialog(null,
-                e.getClass().getSimpleName() + ": " + e.getMessage() + "\nIf you don't know what caused this exception, you can save the stacktrace and post it in jc2mods forums",
-                e.getClass().getSimpleName(),
+                t.getClass().getSimpleName() + ": " + t.getMessage() + "\nIf you don't know what caused this exception, you can save the stacktrace and post it in jc2mods forums",
+                t.getClass().getSimpleName(),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.ERROR_MESSAGE,
                 null,
@@ -35,7 +35,7 @@ public class StackTracePrinter {
         if (n == 0) {
             StringWriter stringWriter = new StringWriter();
             PrintWriter printWriter = new PrintWriter(stringWriter);
-            e.printStackTrace(printWriter);
+            t.printStackTrace(printWriter);
             String stackTrace = stringWriter.toString();
             stackTrace = "[spoiler][code]" + System.lineSeparator() + stackTrace + "[/code][/spoiler]";
 
@@ -51,7 +51,7 @@ public class StackTracePrinter {
 
             File savedFile;
             do {
-                String fileName = d + " " + e.getClass().getSimpleName();
+                String fileName = d + " " + t.getClass().getSimpleName();
                 savedFile = new File(location + "\\" + fileName + (i != 0 ? ("(" + i + ")") : "") + ".txt");
                 i++;
             } while (savedFile.exists());

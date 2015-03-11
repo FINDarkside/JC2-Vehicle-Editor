@@ -1,4 +1,4 @@
-package gui;
+package gui.editpanel;
 
 import java.text.NumberFormat;
 import javax.swing.JFormattedTextField;
@@ -14,7 +14,6 @@ public class Field extends JFormattedTextField {
 
     DataType dataType;
     Element element;
-
 
     public Field(Element e, DataType dt) {
         this.element = e;

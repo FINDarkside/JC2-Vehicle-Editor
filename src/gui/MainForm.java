@@ -23,7 +23,6 @@ public class MainForm extends javax.swing.JFrame {
 
     private Logic logic;
     private final String currentPath = Settings.currentPath;
-    private List<EditPanel> panels;
 
     private ImageContainer imageContainer;
 
@@ -32,6 +31,7 @@ public class MainForm extends javax.swing.JFrame {
      *///
     @SuppressWarnings("LeakingThisInConstructor")
     public MainForm() {
+
         this.logic = new Logic();
         this.getContentPane().setBackground(new Color(255, 255, 255));
 
@@ -71,7 +71,7 @@ public class MainForm extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
         modelContainer = new javax.swing.JPanel();
         menuContainer = new javax.swing.JPanel();
-        editPanelSelector = new javax.swing.JComboBox();
+        editPanelSelector = new javax.swing.JComboBox<EditPanel>();
         jScrollPane1 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -184,10 +184,7 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_mNewFileActionPerformed
 
     private void editPanelSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPanelSelectorActionPerformed
-        if (panels == null || panels.isEmpty()) {
-            return;
-        }
-        setEditPanel(panels.get(editPanelSelector.getSelectedIndex()));
+        setEditPanel((EditPanel) editPanelSelector.getSelectedItem());
     }//GEN-LAST:event_editPanelSelectorActionPerformed
 
     private void mSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mSaveFileActionPerformed
@@ -214,7 +211,7 @@ public class MainForm extends javax.swing.JFrame {
         ImageContainer i;
 
         try {
-            i = new ImageContainer((BufferedImage) (ImageIO.read(new File("test.png"))));
+            i = new ImageContainer((BufferedImage) (ImageIO.read(new File(Settings.currentPath + "\\test.png"))));
         } catch (IOException e) {
             StackTracePrinter.handle(e);
             i = new ImageContainer();
@@ -249,10 +246,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     public void setEditPanels(List<EditPanel> panels) {
-        this.panels = panels;
-        List<String> names = new ArrayList<>();
-        panels.forEach(p -> names.add(p.getName()));
-        editPanelSelector.setModel(new DefaultComboBoxModel(names.toArray()));
+        editPanelSelector.setModel(new DefaultComboBoxModel(panels.toArray()));
         editPanelSelector.setSelectedIndex(0);
     }
 
@@ -291,13 +285,15 @@ public class MainForm extends javax.swing.JFrame {
 
     public static void setupGlobalExceptionHandling() {
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
-            StackTracePrinter.handle((Exception) e);
+            StackTracePrinter.handle(e);
+            System.err.println("Closing program...");
+            System.exit(1);
         });
     }
 
     private javax.swing.JPanel editPanelContainer;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox editPanelSelector;
+    private javax.swing.JComboBox<EditPanel> editPanelSelector;
     private javax.swing.JScrollPane fileChooserContainer;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;

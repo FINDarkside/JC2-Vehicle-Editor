@@ -22,8 +22,8 @@ public class XmlDocument {
     public XmlDocument(File f) throws ParserConfigurationException, SAXException, IOException {
         doc = XmlTools.readXml(f);
 
-        defaultModules = XmlTools.getElementByAttribute(doc.getElementsByTagName("object"),"_default_modules");
-       
+        defaultModules = XmlTools.getElementByAttribute(doc.getElementsByTagName("object"), "name", "_default_modules");
+
     }
 
     public Document getDocument() {
@@ -33,7 +33,5 @@ public class XmlDocument {
     public Element getDefaultModules() {
         return defaultModules;
     }
-    
-    
 
 }

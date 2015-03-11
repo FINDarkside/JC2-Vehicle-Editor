@@ -1,49 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <panels>
 	<panel name="Global">
-		<fields>
-			<fieldGroup root="3DAD18D3">
-				<ignore>
-					<id>91ABE407</id>
-					<id>F3E36D12</id>
-				</ignore>
-			</fieldGroup>
+		<fields root="3DAD18D3">
+			<value name="AirDensity"></value>
+			<value name="AngularDamping"></value>
+			<value name="Boyancy"></value>
+			<value name="CollisionSpinDamping"></value>
+			<value name="CollisionSpinThreshold"></value>
+			<value name="DeadZone"></value>
+			<value name="ExtraGravity"></value>
+			<value name="InitialSlope"></value>
+			<value name="LinearDamping"></value>
+			<value name="MaxVelocityRatio"></value>
+			<value name="MinVelocityRatio"></value>
+			<value name="NormalClippingAngle"></value>
+			<value name="NormalSpinDamping"></value>
+			<value name="SlopeChangeX"></value>
 		</fields>
 	</panel>
 	<panel name="Engine">
-		<fields>
-			<fieldGroup root="718DC3F6">
-				<ignore>
-					<name>_class</name>
-					<name>_name</name>
-					<id>F3E36D12</id>
-				</ignore>
-			</fieldGroup>
+		<fields root="718DC3F6">
+			<value name="clutchsliprpm"></value>
+			<value name="downshift_rpm"></value>
+			<value name="resistance_max"></value>
+			<value name="resistance_min"></value>
+			<value name="resistance_opt"></value>
+			<value name="rpm_max"></value>
+			<value name="rpm_min"></value>
+			<value name="rpm_opt"></value>
+			<value name="rpm_powerband"></value>
+			<value name="torque_max"></value>
+			<value name="torque_min"></value>
+			<value name="torque_opt"></value>
+			<value name="upshift_rpm"></value>
 		</fields>
+
 	</panel>
 	<panel name="Damage">
-		<fields>
-			<fieldGroup root="A6DB0131">
-				<ignore>
-					<name>_class</name>
-					<name>_name</name>
-					<id>E8CBDA9D</id>
-					<id>F3E36D12</id>
-				</ignore>
-			</fieldGroup>
+		<fields root="A6DB0131">
+			<value name="bullet_armor"></value>
+			<value name="deform_scale"></value>
+			<value name="explosion_armor"></value>
+			<value name="explosion_threshold"></value>
+			<value name="glass_armor"></value>
+			<value name="impact_armor"></value>
+			<value name="max_health"></value>
+			<value name="metal_armor"></value>
 		</fields>
 	</panel>
 	<panel name="Physical">
-		<fields>
-			<fieldGroup root="AD34F3C5">
-				<ignore>
-					<name>_class</name>
-					<name>_name</name>
-					<id>EC5A823D</id>
-					<id>F3E36D12</id>
-				</ignore>
-			</fieldGroup>
+		<fields root="AD34F3C5">
+			<value name="CenterOfMass"></value>
+			<value name="ChassiMass"></value>
+			<value name="DragCoefficent"></value>
+			<value name="FrontalArea"></value>
+			<value name="InertiaPitch"></value>
+			<value name="InertiaRoll"></value>
+			<value name="InertiaYaw"></value>
+			<value name="LiftCoefficent"></value>
 		</fields>
 	</panel>
-
+	<panel name="Front wheels">
+		<fields root="99BC8593">
+			<value name="armour"></value>
+			<value name="broken_friction"></value>
+			<value name="broken_mass"></value>
+			<value name="broken_radius"></value>
+			<value name="friction"></value>
+			<value name="hitpoints"></value>
+			<value name="mass"></value>
+			<value name="max_friction"></value>
+			<value name="radius"></value>
+			<value name="sink_friction_coeff"></value>
+			<value name="slip_angle"></value>
+			<value name="wheel_axis"></value>
+			<value name="wheel_nr"></value>
+			<value name="width"></value>
+			<value name="viscosity"></value>
+		</fields>
+	</panel>
+		<panel name="Back wheels">
+		<fields root="683F81F2">
+			<value name="armour"></value>
+			<value name="broken_friction"></value>
+			<value name="broken_mass"></value>
+			<value name="broken_radius"></value>
+			<value name="friction"></value>
+			<value name="hitpoints"></value>
+			<value name="mass"></value>
+			<value name="max_friction"></value>
+			<value name="radius"></value>
+			<value name="sink_friction_coeff"></value>
+			<value name="slip_angle"></value>
+			<value name="wheel_axis"></value>
+			<value name="wheel_nr"></value>
+			<value name="width"></value>
+			<value name="viscosity"></value>
+		</fields>
+	</panel>
 </panels>

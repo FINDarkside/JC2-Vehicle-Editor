@@ -2,11 +2,13 @@ package logic;
 
 import logic.dictionaries.FieldsDictionary;
 import gui.MainForm;
+import gui.filetree.FileTreeModel;
 import jtools.FileTools;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
+import jtools.GibbedsTools;
 import logic.dictionaries.VehicleNames;
 import org.xml.sax.SAXException;
 
@@ -21,8 +23,8 @@ public class Logic {
     private final String currentPath = Settings.currentPath;
 
     private File defaultSavePath = new File(currentPath + "\\Dropzone");
-    private File customSavePath = null;
-    private File savePath = defaultSavePath;
+    private File customSavePath = new File("C:\\Program Files (x86)\\Steam\\SteamApps\\common\\Just Cause 2\\DrOpZoNe\\Vehicles");
+    private File savePath = customSavePath;
 
     private Project currentProject;
     private Map<File, Project> projects = new HashMap<>();
@@ -32,57 +34,82 @@ public class Logic {
     }
 
     public Logic() {
+
         try {
             VehicleNames.init();
             FieldsDictionary.init();
             Settings.init();
-        } catch (IOException e) {
+        } catch (Exception e) {
             StackTracePrinter.handle(e);
         }
+
     }
 
     public void test() {
 
-        File test = new File(currentPath + "\\Files\\Vehicles\\Cars\\lave.v035_sport_custom.eez");
+        File test = new File("C:\\Program Files (x86)\\Steam\\SteamApps\\common\\Just Cause 2\\DrOpZoNe\\Vehicles\\lave.v034_sport_buggy.eez");
 
         loadFile(test);
 
     }
 
-    public boolean loadFile(File f) {
+    public void newFile(File f) {
         if (projects.containsKey(f)) {
-            //form.setEditPanel(projects.get(f).getPanel("test"));
-            currentProject = projects.get(f);
-            return true;
+            setCurrentProject(projects.get(f));
+            return;
         }
 
         File unpacked;
         Project project;
         try {
-            unpacked = FileTools.smallUnpack(f);
+            System.out.println("Unpacking " + f.getAbsolutePath());
+            unpacked = GibbedsTools.smallUnpack(f);
+            System.out.println("Moving " + unpacked.getAbsolutePath() + " to " + savePath);
             unpacked = FileTools.moveFile(unpacked, savePath);
+            System.out.println("Creating new project...");
             project = new Project(unpacked);
-        } catch (IOException | InterruptedException | ParserConfigurationException | SAXException e) {
+        } catch (Exception e) {
+            cleanDefaultVehicleFolder();
             StackTracePrinter.handle(e);
-            return false;
+            return;
+        }
+        projects.put(f, project);
+        setCurrentProject(project);
+    }
+
+    public void loadFile(File f) {
+        if (projects.containsKey(f)) {
+            setCurrentProject(projects.get(f));
+            return;
         }
 
-        form.setEditPanels(project.getPanels());
+        File unpacked;
+        Project project;
+        try {
+            System.out.println("Unpacking " + f.getAbsolutePath());
+            unpacked = GibbedsTools.smallUnpack(f);
+            System.out.println("Creating new project...");
+            project = new Project(unpacked);
+        } catch (Exception e) {
+            cleanDefaultVehicleFolder();
+            StackTracePrinter.handle(e);
+            return;
+        }
         projects.put(f, project);
+        setCurrentProject(project);
+    }
+
+    public void setCurrentProject(Project project) {
         currentProject = project;
-
-        return true;
-
+        form.setEditPanels(project.getPanels());
     }
 
     public void saveCurrentProject() {
-        System.out.println("dasda");
-        currentProject.saveXml();
-        /*try {
-         File packed = FileTools.smallPack(currentFile);
-         } catch (IOException | InterruptedException e) {
-         StackTracePrinter.handle(e);
-         }*/
+        try {
+            currentProject.save();
+        } catch (Exception e) {
+            StackTracePrinter.handle(e);
+        }
     }
 
     public void saveAllProjects() {
@@ -91,6 +118,16 @@ public class Logic {
 
     public void editModel() {
         throw new UnsupportedOperationException();
+    }
+
+    public void cleanDefaultVehicleFolder() {
+        for (File f : new File(Settings.currentPath + "\\Files\\Vehicles").listFiles()) {
+            for (File f2 : f.listFiles()) {
+                if (f2.isDirectory()) {
+                    FileTools.deleteFolder(f2);
+                }
+            }
+        }
     }
 
 }

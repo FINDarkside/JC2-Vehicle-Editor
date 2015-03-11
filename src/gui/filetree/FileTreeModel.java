@@ -24,14 +24,15 @@ public class FileTreeModel implements TreeModel {
     }
 
     private void init(File root) {
-
         for (File f : root.listFiles()) {
-            if (f.isFile()) {
+            if (f.isFile() && f.getName().endsWith("eez")) {
                 map.put(new Item(f), new ArrayList<Item>());
-            } else {
+            }
+            if (f.isDirectory()) {
                 map.put(new Item(f), listChilds(f));
                 init(f);
             }
+
         }
     }
 
@@ -40,8 +41,12 @@ public class FileTreeModel implements TreeModel {
             return null;
         }
         ArrayList<Item> items = new ArrayList<>();
+        File[] files = root.listFiles();
+
         for (File f : root.listFiles()) {
-            items.add(new Item(f));
+            if (!(f.isFile() && !f.getName().endsWith("eez"))) {
+                items.add(new Item(f));
+            }
         }
         Collections.sort(items);
         return items;
@@ -97,7 +102,7 @@ public class FileTreeModel implements TreeModel {
 
     @Override
     public void addTreeModelListener(TreeModelListener l) {
-        
+
     }
 
     @Override

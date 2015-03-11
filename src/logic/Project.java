@@ -1,6 +1,6 @@
 package logic;
 
-import gui.Field;
+import gui.editpanel.Field;
 import gui.editpanel.EditPanel;
 import jtools.FileTools;
 import java.io.*;
@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import jtools.GibbedsTools;
 import jtools.XmlTools;
 import logic.dictionaries.FieldsDictionary;
 import org.w3c.dom.*;
@@ -38,7 +39,7 @@ public class Project {
             }
         }
 
-        this.mvdollXml = FileTools.convert(mvdoll);
+        this.mvdollXml = GibbedsTools.convert(mvdoll);
 
         doc = new XmlDocument(mvdollXml);
 
@@ -49,19 +50,18 @@ public class Project {
         } else {
             parseSeve();
         }
-
     }
 
-    public void saveXml() {
+    public void save() throws TransformerException, IOException, InterruptedException {
         System.out.println("Saving " + mvdollXml.getAbsolutePath());
         for (EditPanel ep : panels) {
             ep.save();
         }
-        try {
-            XmlTools.saveDocument(doc.getDocument(), mvdollXml);
-        } catch (TransformerException ex) {
-            Logger.getLogger(Project.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        XmlTools.saveDocument(doc.getDocument(), mvdollXml);
+
+        GibbedsTools.convert(mvdollXml);
+        GibbedsTools.smallPack(file);
     }
 
     public EditPanel getPanel(int index) {
@@ -72,32 +72,55 @@ public class Project {
         return panels;
     }
 
+    private void parseFields(Element doc, Element parseDoc, EditPanel panel) {
+        if (doc == null) {
+            return;
+        }
+        NodeList fieldsList = XmlTools.getChildElementsByTagName(parseDoc, "fields");
+        NodeList docObjects = XmlTools.getChildElementsByTagName(doc, "object");
+        for (int i = 0; i < fieldsList.getLength(); i++) {
+            Element fieldsElement = (Element) fieldsList.item(i);
+            if (fieldsElement.getAttribute("root").isEmpty()) {
+                parseFields(doc, fieldsElement, panel);
+                continue;
+            }
+
+            Element docElement = XmlTools.getElementByNameOrId(docObjects, fieldsElement.getAttribute("root"));
+            parseFields(docElement, fieldsElement, panel);
+        }
+
+        NodeList parseValues = XmlTools.getChildElementsByTagName(parseDoc, "value");
+        NodeList docValues = XmlTools.getChildElementsByTagName(doc, "value");
+        for (int i = 0; i < parseValues.getLength(); i++) {
+            Element targetValue = (Element) parseValues.item(i);
+            Element value = XmlTools.getElementByNameOrId(docValues, targetValue.getAttribute("name"));
+            if (value != null) {
+                String name = targetValue.getTextContent();
+                if (name != null && !name.isEmpty()) {
+                    System.out.println("öö");
+                    panel.createTextField(value, name);
+                } else {
+                    panel.createTextField(value);
+                }
+            }
+        }
+    }
+
     private void parseLave() {
 
-        List<FieldList> fieldLists = FieldsDictionary.getCar();
-        for (FieldList fl : fieldLists) {
-            String objectName = fl.getObjectName();
-            Element e = XmlTools.getElementByAttribute(doc.getDefaultModules(), objectName);
-
-            if (e != null) {
-                EditPanel panel = new EditPanel();
-                panel.setName(objectName);
-                panels.add(panel);
-
-                for (String id : fl.getFieldNames()) {
-                    Element fieldElement = XmlTools.getElementByAttribute(e, id);
-
-                    if (fieldElement != null) {
-
-                        panel.createTextField(fieldElement);
-                    }
-                }
+        Document carFields = FieldsDictionary.getCar();
+        Element root = carFields.getDocumentElement();
+        NodeList panelElements = root.getElementsByTagName("panel");
+        for (int i = 0; i < panelElements.getLength(); i++) {
+            Element panelElement = (Element) panelElements.item(i);
+            EditPanel editPanel = new EditPanel(panelElement.getAttribute("name"));
+            parseFields(doc.getDefaultModules(), panelElement, editPanel);
+            if (editPanel.getComponents().length != 0) {
+                this.panels.add(editPanel);
             }
         }
 
     }
-    
- 
 
     private void parseArve() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

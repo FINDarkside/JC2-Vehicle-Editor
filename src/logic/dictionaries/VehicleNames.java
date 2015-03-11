@@ -5,6 +5,7 @@ package logic.dictionaries;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import logic.Settings;
 
 /**
  *
@@ -15,8 +16,8 @@ public class VehicleNames {
     private static Dictionary nameToFile;
     
     public static void init() throws IOException{
-        fileToName = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles.txt"),false);
-        nameToFile = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles.txt"),true);
+        fileToName = new Dictionary(new File(Settings.currentPath+"\\Files\\Dictionary\\Vehicles.txt"),false);
+        nameToFile = new Dictionary(new File(Settings.currentPath+"\\Files\\Dictionary\\Vehicles.txt"),true);
     }
     
     public static String getName(String file){
