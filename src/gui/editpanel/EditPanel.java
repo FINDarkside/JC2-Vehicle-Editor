@@ -1,57 +1,79 @@
 package gui.editpanel;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import gui.Field;
+import java.text.ParseException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.*;
+import logic.DataType;
+import logic.StackTracePrinter;
+import net.miginfocom.swing.MigLayout;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  *
  * @author FINDarkside
  */
-public abstract class EditPanel extends JPanel{
-    
-    private List<JComponent> components = new ArrayList<>();
+public class EditPanel extends JPanel {
 
-    protected final static int topMargin = 5;
-    protected final static int leftMargin = 5;
-    protected final static int verticalSpace = 10; //Vertical space between elements
-    protected final static int horizontalSpace = 20;
-    protected final static int height = 26;
-    
+    private List<Field> components = new ArrayList<>();
+
     protected List<String> text;
 
-    protected int y = topMargin;
-    
-    public EditPanel(){
-        this.setLayout(null);
+    public EditPanel() {
+        this.setLayout(new MigLayout("wrap 2",
+                "",
+                "30"));
     }
 
-    protected void createTextField(String line) {
-
-        String key = line.substring(line.indexOf('\"') + 1, line.indexOf('\"', line.indexOf('\"') + 1));
-        String value = line.substring(line.indexOf('>') + 1, line.lastIndexOf('<'));
-
+    public void createTextField(Element e) {
+        String key = e.getAttribute("name");
+        key = key.isEmpty() ? e.getAttribute("id") : key;
+        String value = e.getTextContent();
 
         JLabel label = new JLabel(key);
 
-        label.setBounds(leftMargin, y, 200, height);
         this.add(label);
 
-        JTextField field = new JTextField(value);
-        field.setBounds(leftMargin + label.getWidth() + horizontalSpace, y, 200, height);
+        DataType dataType;
 
-        this.add(field);
-        
-        y += field.getHeight() + verticalSpace;
-        
-        this.setBounds(0, 0, 0,y);
+        String type = e.getAttribute("type");
 
+        switch (type) {
+            case "int":
+                dataType = DataType.INTEGER;
+                break;
+            case "float":
+                dataType = DataType.FLOAT;
+                break;
+            case "string":
+                dataType = DataType.STRING;
+                break;
+            case "vec":
+                dataType = DataType.STRING;
+                break;
+            default:
+                dataType = DataType.STRING;
+                System.err.println("Undefined data type " + type);
+        }
+
+        Field field = new Field(e, dataType);
+        field.setValue(value);
+        this.add(field, "width 100:300, height 25, gapleft 10");
+        components.add(field);
     }
-    
-    public List<String> getXml(){
-        return null;
+
+    public void save() {
+        for (Field f : components) {
+            try {
+                f.commitEdit();
+            } catch (ParseException ex) {
+                StackTracePrinter.handle(ex);
+            }
+            f.getElement().setTextContent(f.getValue().toString());
+        }
     }
+
 }

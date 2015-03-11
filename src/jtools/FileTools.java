@@ -1,17 +1,10 @@
 package jtools;
 
 import java.awt.FileDialog;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import static java.nio.file.StandardCopyOption.*;
@@ -37,11 +30,9 @@ public class FileTools {
         }
         reader.close();
         return result;
-
     }
 
-    public static File changeFileExtension(File f, String ext) {
-
+    private static File changeFileExtension(File f, String ext) {
         String name = f.getAbsolutePath();
         int i = name.lastIndexOf(".");
         name = name.substring(0, i) + "." + ext;
@@ -49,13 +40,23 @@ public class FileTools {
         return f;
     }
 
-    public static File renameFile(File f, String name) throws IOException {
-        File newFile = new File(f.getAbsolutePath().substring(0, f.getAbsolutePath().lastIndexOf('\\') + 1) + name);
+    /**
+     * renameFile
+     *
+     * Renames file
+     *
+     * @param file File to rename
+     * @param name New name
+     * @return renamed file
+     * @throws java.io.IOException
+     */
+    public static File renameFile(File file, String name) throws IOException {
+        File newFile = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1) + name);
         if (newFile.exists()) {
             deleteFolder(newFile);
         }
-        if (!f.renameTo(newFile)) {
-            throw new IOException("Renaming " + f.getName() + " to " + newFile.getName() + " failed.");
+        if (!file.renameTo(newFile)) {
+            throw new IOException("Renaming " + file.getName() + " to " + newFile.getName() + " failed.");
         }
         return newFile;
     }
@@ -118,7 +119,7 @@ public class FileTools {
 
         java.awt.Frame f = null;
         FileDialog fc = new FileDialog(f, "Select file");
-        
+
         fc.setFile("*." + ext);
         fc.setDirectory(startPath);
         fc.setVisible(true);

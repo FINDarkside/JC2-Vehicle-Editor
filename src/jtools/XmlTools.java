@@ -1,6 +1,20 @@
 package jtools;
 
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -8,35 +22,65 @@ import java.util.List;
  */
 public class XmlTools {
 
-    public static List<String> getElement(List<String> doc, int i) { //Returns the xml element(+stuff inside it) (document,start index of the elements) 
-        int indent = 0;
-        for (int i2 = i; i2 < doc.size(); i2++) {
-            String s = doc.get(i2);
-            
-            int starts = 0;
-            int ends = 0;
+    private static DocumentBuilder documentBuilder = null;
 
-            for (int j = 0; j < s.length(); j++) {
-                if (s.charAt(s.indexOf(">") - 1) == '/') {
-                    starts = 0;
-                    ends = 0;
-                    break;
-                }
-                starts += s.charAt(j) == '<' ? 1 : 0;
-                if (s.charAt(j) == '/' && s.charAt(j - 1) == '<') {
-                    ends++;
-                }
+    public static Element getElementByAttribute(Element e, String attr) {
+        return getElementByAttribute(e.getChildNodes(), attr);
+    }
+
+    public static Element getElementByAttribute(NodeList nodes, String attr) {
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node n = nodes.item(i);
+            if (!n.hasAttributes()) {
+                continue;
             }
-            
-            if(starts == 1 && ends == 1){
-                indent--;
-            }else if (starts == 1 && ends == 0) {
-                indent++;
-            }
-            if(indent == 0){
-                return doc.subList(i, i2+1);
+            NamedNodeMap attrs = n.getAttributes();
+            for (int j = 0; j < attrs.getLength(); j++) {
+                String a = attrs.item(j).getNodeValue();
+                if (a.equals(attr)) {
+                    return (Element) n;
+                }
             }
         }
-        return doc.subList(i, doc.size());
+        return null;
+    }
+
+    public static Node getNodeByAttribute(Element e, String attr) {
+        NodeList nodes = e.getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node n = nodes.item(i);
+            if (!n.hasAttributes()) {
+                continue;
+            }
+            NamedNodeMap attrs = n.getAttributes();
+            for (int j = 0; j < attrs.getLength(); j++) {
+                String a = attrs.item(j).getNodeValue();
+                if (a.equals(attr)) {
+                    return n;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Document readXml(File f) throws SAXException, IOException, ParserConfigurationException {
+        if (documentBuilder == null) {
+            documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        }
+        return documentBuilder.parse(f);
+    }
+
+    /**
+     * Saves document to given location
+     *
+     * @param doc Document to save
+     * @param location Where xml file will be saved
+     */
+    public static void saveDocument(Document doc, File location) throws TransformerConfigurationException, TransformerException {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        Result output = new StreamResult(location);
+        Source input = new DOMSource(doc);
+
+        transformer.transform(input, output);
     }
 }

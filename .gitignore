@@ -1,10 +1,14 @@
-/Files/
 /build/
 /dist/
 /test/
 /nbproject/
 /Dropzone/
 /Stacktraces/
+/Files/GibbedsTools
+/Files/Icons
+/Files/Vehicles
+/Files/testzone
 manifest.mf
 build.xml
 test.png
+

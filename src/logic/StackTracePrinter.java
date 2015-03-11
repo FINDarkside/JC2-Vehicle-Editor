@@ -3,17 +3,11 @@ package logic;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import java.io.*;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import javax.swing.JOptionPane;
 import jtools.FileTools;
 
@@ -26,6 +20,8 @@ public class StackTracePrinter {
     private static final String location = Paths.get("").toAbsolutePath().toString() + "\\Stacktraces";
 
     public static void handle(Exception e) {
+        e.printStackTrace(System.err);
+        
         Object[] options = {"Save stacktrace & copy to clipboard", "Continue"};
         int n = JOptionPane.showOptionDialog(null,
                 e.getClass().getSimpleName() + ": " + e.getMessage() + "\nIf you don't know what caused this exception, you can save the stacktrace and post it in jc2mods forums",
@@ -41,7 +37,7 @@ public class StackTracePrinter {
             PrintWriter printWriter = new PrintWriter(stringWriter);
             e.printStackTrace(printWriter);
             String stackTrace = stringWriter.toString();
-            stackTrace = "[spoiler][code]" + stackTrace + "[/code][/spoiler]";
+            stackTrace = "[spoiler][code]" + System.lineSeparator() + stackTrace + "[/code][/spoiler]";
 
             StringSelection stringSelection = new StringSelection(stackTrace);
             Clipboard clpbrd = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -67,10 +63,7 @@ public class StackTracePrinter {
             }
 
         }
-        
-        System.out.println(e.toString());
-        System.out.println("asdasd");
-        
+
     }
 
 }

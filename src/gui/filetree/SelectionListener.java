@@ -5,7 +5,6 @@ import java.io.File;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import logic.Logic;
 
 /**

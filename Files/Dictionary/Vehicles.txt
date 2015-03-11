@@ -1,0 +1,84 @@
+arve.v009_civil_helicopter:Mullen Skeeter Hawk
+arve.v009_civil_helicopter_2:Mullen Skeeter Eagle
+arve.v009_military_helicopter:UH-10 Chippewa
+arve.v010_personal_propellerplane:Peek Airhawk
+arve.v059_civilian_helicopter:Rowlinson K22
+arve.v060_attackheli:AH-33 Topachula
+arve.v061_attackheli:Sivirkin 15 Havoc
+arve.v062_chopper:H-62 Quapaw
+arve.v064_personal_jet:Cassius 192
+arve.v067_speedplane:Pell Silverbolt
+arve.v071_jet_fighter:Si-47 Leopard
+arve.v072_cargo_plane:Bering I-86DP
+arve.v076_jet_blackplane:G9 Eclipse
+arve.v114_jumbojet:Aeroliner 474
+lave.v001_sedan:Hamaya Oldman
+lave.v002_combi:Sakura Aquila Space
+lave.v002_police:Vaultier Patrolman
+lave.v002_sedan:Sakura Aquila City
+lave.v002_sedan_taxi:Sakura Aguila Forte
+lave.v002_sport:Sakura Aquila Metro
+lave.v003_cover:Chevalier Traveller SD
+lave.v003_hardtop:Chevalier Express HT
+lave.v003_icecream:Chevalier Piazza IX
+lave.v003_lorry:Chevalier Traveller SX
+lave.v003_tourist:Chevalier Liner SB
+lave.v003_work:Chevalier Traveller SC
+lave.v004_truck_busreavers:Reaper's Niseco Coastal D22
+lave.v004_truck_buss:Niseco Coastal D22
+lave.v004_truck_garbage:Niseco Tusker G216
+lave.v004_truck_regular:Niseco Tusker P246
+lave.v004_truck_transport:Niseco Tusker D18
+lave.v005_tuktuk_civ:Tuk-Tuk Laa
+lave.v005_tuktuk_taxi:Tuk-Tuk Rickshaw
+lave.v006_moped:Schulz Virginia
+lave.v006_vespa:Mosca 2000
+lave.v007_classic_mc:Hamaya Y250S
+lave.v007_heavy:Hamaya 1300 Elite Cruiser
+lave.v007_military:Hamaya GSY650
+lave.v007_sport:Hamaya Cougar 600
+lave.v012_military_tank_small:GV-104 Razorback
+lave.v014_jeep:Marten Storm III
+lave.v015_military_vehicle:Chepachet PVD
+lave.v016_military_apc:SV-1003 Raider
+lave.v017_military_jeep:MV
+lave.v018_military_buggy:Maddox FVA 45
+lave.v020_sugga:Saas PP12 Hogg
+lave.v022_heavydrop_jeep:Hedge Wildchild
+lave.v023_customcar:Poloma Renegade
+lave.v024_sportscar:Garret Traver-Z
+lave.v025_sportcar:Titus ZJ
+lave.v028_luxuary_sportcar:Civadier 999
+lave.v030_super_sportcar:Mancini Cavallo
+lave.v034_sport_buggy:Stinger Dunebug
+lave.v035_sport_custom:Boyd Fireflame 544
+lave.v036_city_jeep:Dalton N90
+lave.v037_sheldon_truck:Pocumtuck Nomad
+lave.v041_tractor:Dongtai
+lave.v044truck:Fengding EC14FD2
+lave.v045_firetruck:Kenwall Heavy Rescue
+lave.v046_buscoach:Vanderbildt LeisureLiner
+lave.v047_jeep_small:Wilforce
+lave.v048_bus_civ:Dinggong
+lave.v050_large_super_truck:URGA-9380
+lave.v052_classic:Makoto MZ 250
+lave.v052_motorcross:Makoto MZ 260X
+lave.v055_vespa:Mosca 125 Performance
+lave.v056_atv:Shimuzu Traclin
+lave.v056_atv_world:Shimuzu
+lave.v108_armored_transport:SAAS PP30 Ox
+lave.v109_limo:Columbi Excelsior
+seve.v011_charter:TextE Charteu 52CT
+seve.v011_houseboat:Orque Living 42T
+seve.v011_sailboat:Orque Grandois 21TT
+seve.v011_yacht:Orque Bon Ton 71FT
+seve.v082_motorboat_standard_small:Pattani Gluay
+seve.v083_motorboat_small:Frisco Catshark S-38
+seve.v086_barge:Zhejiang 6903
+seve.v087_catamaran_speedboat:SnakeHead T20
+seve.v088_djonk:Kuang
+seve.v089_raceboat:MTA Powerrun 77
+seve.v095_swamp_boat:Touissant 184HS
+seve.v098_indo:Trat Tang-mo
+seve.v104_attack_boat:YP-107 Phoenix
+seve.v105_military_boat:Winstons Amen 69

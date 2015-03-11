@@ -1,24 +1,19 @@
 package gui;
 
+import gui.editpanel.EditPanel;
 import gui.filetree.FileTreeModel;
 import gui.filetree.SelectionListener;
-import logic.Logic;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
+import logic.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import logic.StackTracePrinter;
+import javax.swing.*;
 
 /**
  *
@@ -27,13 +22,15 @@ import logic.StackTracePrinter;
 public class MainForm extends javax.swing.JFrame {
 
     private Logic logic;
-    private final String currentPath = Paths.get("").toAbsolutePath().toString();
+    private final String currentPath = Settings.currentPath;
+    private List<EditPanel> panels;
 
     private ImageContainer imageContainer;
 
     /**
      * Creates new form MainForm
-     */
+     *///
+    @SuppressWarnings("LeakingThisInConstructor")
     public MainForm() {
         this.logic = new Logic();
         this.getContentPane().setBackground(new Color(255, 255, 255));
@@ -55,7 +52,7 @@ public class MainForm extends javax.swing.JFrame {
 
     }
 
-    public void setIcons() {
+    private void setIcons() {
         mOpenFile.setIcon(new ImageIcon(currentPath + "/Files/Icons/open.png"));
         mSaveFile.setIcon(new ImageIcon(currentPath + "/Files/Icons/save.png"));
         mNewFile.setIcon(new ImageIcon(currentPath + "/Files/Icons/new.png"));
@@ -74,6 +71,7 @@ public class MainForm extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
         modelContainer = new javax.swing.JPanel();
         menuContainer = new javax.swing.JPanel();
+        editPanelSelector = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -95,15 +93,21 @@ public class MainForm extends javax.swing.JFrame {
             .addGap(0, 150, Short.MAX_VALUE)
         );
 
+        editPanelSelector.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editPanelSelectorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout menuContainerLayout = new javax.swing.GroupLayout(menuContainer);
         menuContainer.setLayout(menuContainerLayout);
         menuContainerLayout.setHorizontalGroup(
             menuContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addComponent(editPanelSelector, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         menuContainerLayout.setVerticalGroup(
             menuContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 41, Short.MAX_VALUE)
+            .addComponent(editPanelSelector, javax.swing.GroupLayout.DEFAULT_SIZE, 42, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
@@ -142,6 +146,11 @@ public class MainForm extends javax.swing.JFrame {
         jMenu1.add(mOpenFile);
 
         mSaveFile.setText("Save");
+        mSaveFile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mSaveFileActionPerformed(evt);
+            }
+        });
         jMenu1.add(mSaveFile);
 
         jMenuBar1.add(jMenu1);
@@ -174,12 +183,22 @@ public class MainForm extends javax.swing.JFrame {
 
     }//GEN-LAST:event_mNewFileActionPerformed
 
+    private void editPanelSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPanelSelectorActionPerformed
+        if (panels == null || panels.isEmpty()) {
+            return;
+        }
+        setEditPanel(panels.get(editPanelSelector.getSelectedIndex()));
+    }//GEN-LAST:event_editPanelSelectorActionPerformed
+
+    private void mSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mSaveFileActionPerformed
+        logic.saveCurrentProject();
+    }//GEN-LAST:event_mSaveFileActionPerformed
+
     private void customInit() {
         jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
 
         initPictureContainer();
-
-        UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "/Files/Icons/new.png"));
+        UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "\\Files\\Icons\\new.png"));
 
         JTree tree = new JTree(new FileTreeModel(new File(currentPath + "\\Files\\Vehicles")));
         Font currentFont = tree.getFont();
@@ -217,24 +236,26 @@ public class MainForm extends javax.swing.JFrame {
         int width = 90;
 
         b.setBounds(i.getWidth() + 2, i.getHeight() - height, width, height);
-        b.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                logic.editModel();
-            }
+        b.addActionListener((java.awt.event.ActionEvent evt) -> {
+            logic.editModel();
         });
 
         modelContainer.add(b);
     }
 
     public void setEditPanel(JPanel panel) {
-        panel.setPreferredSize(new Dimension(panel.getWidth(), jScrollPane1.getHeight()));
         jScrollPane1.setViewportView(panel);
 
     }
 
-    /**
-     * @param args the command line arguments
-     */
+    public void setEditPanels(List<EditPanel> panels) {
+        this.panels = panels;
+        List<String> names = new ArrayList<>();
+        panels.forEach(p -> names.add(p.getName()));
+        editPanelSelector.setModel(new DefaultComboBoxModel(names.toArray()));
+        editPanelSelector.setSelectedIndex(0);
+    }
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -262,26 +283,21 @@ public class MainForm extends javax.swing.JFrame {
         /* Create and display the form */
         setupGlobalExceptionHandling();
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MainForm().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainForm().setVisible(true);
         });
 
     }
 
     public static void setupGlobalExceptionHandling() {
-        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(Thread t, Throwable e) {
-                StackTracePrinter.handle((Exception) e);
-            }
+        Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
+            StackTracePrinter.handle((Exception) e);
         });
     }
 
     private javax.swing.JPanel editPanelContainer;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox editPanelSelector;
     private javax.swing.JScrollPane fileChooserContainer;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;

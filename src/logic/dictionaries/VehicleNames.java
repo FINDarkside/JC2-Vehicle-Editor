@@ -15,15 +15,15 @@ public class VehicleNames {
     private static Dictionary nameToFile;
     
     public static void init() throws IOException{
-        fileToName = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles"),false);
-        nameToFile = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles"),true);
+        fileToName = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles.txt"),false);
+        nameToFile = new Dictionary(new File(Paths.get("").toAbsolutePath().toString()+"\\Files\\Dictionary\\Vehicles.txt"),true);
     }
     
-    public static String getName(String s){
-        return fileToName.get(s);
+    public static String getName(String file){
+        return fileToName.get(file);
     }
     
-    public static String getFile(String s){
-        return nameToFile.get(s);
+    public static String getFile(String name){
+        return nameToFile.get(name);
     }
 }

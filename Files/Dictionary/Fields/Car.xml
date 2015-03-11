@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<panels>
+	<panel name="Global">
+		<fields>
+			<fieldGroup root="3DAD18D3">
+				<ignore>
+					<id>91ABE407</id>
+					<id>F3E36D12</id>
+				</ignore>
+			</fieldGroup>
+		</fields>
+	</panel>
+	<panel name="Engine">
+		<fields>
+			<fieldGroup root="718DC3F6">
+				<ignore>
+					<name>_class</name>
+					<name>_name</name>
+					<id>F3E36D12</id>
+				</ignore>
+			</fieldGroup>
+		</fields>
+	</panel>
+	<panel name="Damage">
+		<fields>
+			<fieldGroup root="A6DB0131">
+				<ignore>
+					<name>_class</name>
+					<name>_name</name>
+					<id>E8CBDA9D</id>
+					<id>F3E36D12</id>
+				</ignore>
+			</fieldGroup>
+		</fields>
+	</panel>
+	<panel name="Physical">
+		<fields>
+			<fieldGroup root="AD34F3C5">
+				<ignore>
+					<name>_class</name>
+					<name>_name</name>
+					<id>EC5A823D</id>
+					<id>F3E36D12</id>
+				</ignore>
+			</fieldGroup>
+		</fields>
+	</panel>
+
+</panels>
