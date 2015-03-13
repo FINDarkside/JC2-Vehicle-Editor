@@ -35,14 +35,6 @@ public class Logic {
 
     public Logic() {
 
-        try {
-            VehicleNames.init();
-            FieldsDictionary.init();
-            Settings.init();
-        } catch (Exception e) {
-            StackTracePrinter.handle(e);
-        }
-
     }
 
     public void test() {
@@ -53,41 +45,24 @@ public class Logic {
 
     }
 
-    public void newFile(File f) {
-        if (projects.containsKey(f)) {
-            setCurrentProject(projects.get(f));
-            return;
-        }
-
-        File unpacked;
-        Project project;
-        try {
-            System.out.println("Unpacking " + f.getAbsolutePath());
-            unpacked = GibbedsTools.smallUnpack(f);
-            System.out.println("Moving " + unpacked.getAbsolutePath() + " to " + savePath);
-            unpacked = FileTools.moveFile(unpacked, savePath);
-            System.out.println("Creating new project...");
-            project = new Project(unpacked);
-        } catch (Exception e) {
-            cleanDefaultVehicleFolder();
-            StackTracePrinter.handle(e);
-            return;
-        }
-        projects.put(f, project);
-        setCurrentProject(project);
-    }
-
     public void loadFile(File f) {
+
         if (projects.containsKey(f)) {
             setCurrentProject(projects.get(f));
             return;
         }
+
+        boolean newVehicle = f.getAbsolutePath().contains(currentPath + "\\Files\\Vehicles\\");
 
         File unpacked;
         Project project;
         try {
             System.out.println("Unpacking " + f.getAbsolutePath());
             unpacked = GibbedsTools.smallUnpack(f);
+            if (newVehicle) {
+                System.out.println("Moving " + unpacked.getAbsolutePath() + " to " + savePath);
+                unpacked = FileTools.moveToFolder(unpacked, savePath);
+            }
             System.out.println("Creating new project...");
             project = new Project(unpacked);
         } catch (Exception e) {
@@ -113,7 +88,24 @@ public class Logic {
     }
 
     public void saveAllProjects() {
+        for (Project p : projects.values()) {
+            try {
+                p.save();
+            } catch (Exception e) {
+                StackTracePrinter.handle(e);
+            }
+        }
 
+    }
+
+    public void closeProject(File f) {
+        projects.get(f).close();
+    }
+
+    public void closeAllProjects() {
+        for (Project p : projects.values()) {
+            p.close();
+        }
     }
 
     public void editModel() {
@@ -124,9 +116,19 @@ public class Logic {
         for (File f : new File(Settings.currentPath + "\\Files\\Vehicles").listFiles()) {
             for (File f2 : f.listFiles()) {
                 if (f2.isDirectory()) {
+                    System.out.println("Deleting " + f2.getAbsolutePath());
                     FileTools.deleteFolder(f2);
                 }
             }
+        }
+    }
+
+    public void close() {
+        if (Settings.saveOnExit) {
+            saveAllProjects();
+        }
+        if (Settings.deleteUnpackedOnExit) {
+            closeAllProjects();
         }
     }
 

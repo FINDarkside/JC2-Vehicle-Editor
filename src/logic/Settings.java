@@ -13,8 +13,9 @@ public class Settings {
     public final static String currentPath = getPath();
 
     public static File blender = null;
-    public static boolean deleteVehicleFolderOnSave = false;
+    public static boolean deleteUnpackedOnExit = true;
     public static boolean saveXmlInEez = true;
+    public static boolean saveOnExit = false;
 
     public static void setBlender(File f) {
         blender = f;

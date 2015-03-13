@@ -2,8 +2,11 @@ package jtools;
 
 import java.awt.FileDialog;
 import java.io.*;
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -61,14 +64,14 @@ public class FileTools {
         return newFile;
     }
 
-    public static File moveFile(File f, File destination) throws IOException {
+    public static File moveToFolder(File f, File folder) throws IOException {
 
-        File newFile = new File(destination.getAbsolutePath() + "\\" + f.getName());
+        File newFile = new File(folder.getAbsolutePath() + "\\" + f.getName());
         if (newFile.exists()) {
             deleteFolder(newFile);
         }
 
-        Files.move(f.toPath(), newFile.toPath(), REPLACE_EXISTING);
+        Files.move(f.toPath(), newFile.toPath(), ATOMIC_MOVE);
 
         return newFile;
     }
@@ -86,7 +89,6 @@ public class FileTools {
         writer.close();
     }
 
-
     public static File chooseFile(String ext, String startPath) {
 
         java.awt.Frame f = null;
@@ -99,7 +101,7 @@ public class FileTools {
         String directory = fc.getDirectory();
         String name = fc.getFile();
         File file = (name != null) ? new File(directory + "\\" + name) : null;
-
+        
         return file;
     }
 
@@ -135,7 +137,7 @@ public class FileTools {
                 results.add(file);
             }
         }
-
+        
         return results;
     }
 
@@ -155,6 +157,5 @@ public class FileTools {
         }
         folder.delete();
     }
-
 
 }

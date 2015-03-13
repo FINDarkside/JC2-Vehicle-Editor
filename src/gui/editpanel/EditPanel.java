@@ -1,5 +1,7 @@
 package gui.editpanel;
 
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.text.ParseException;
 import java.util.*;
 import java.util.logging.Level;
@@ -15,17 +17,16 @@ import org.w3c.dom.Node;
  *
  * @author FINDarkside
  */
-public class EditPanel extends JPanel {
+public class EditPanel extends JPanel implements Scrollable {
 
-    private List<Field> components = new ArrayList<>();
+    private List<Field> fields = new ArrayList<>();
 
     protected List<String> text;
 
     public EditPanel(String name) {
         this.setName(name);
-        this.setLayout(new MigLayout("wrap 2",
-                "",
-                "30"));
+        this.setLayout(new MigLayout("wrap 2", "", "30"));
+
     }
 
     public void createTextField(Element e, String name) {
@@ -57,8 +58,8 @@ public class EditPanel extends JPanel {
 
         Field field = new Field(e, dataType);
         field.setValue(e.getTextContent());
-        this.add(field, "width 100:300, height 25, gapleft 10");
-        components.add(field);
+        this.add(field, "width 50:500, height 25, gapleft 10");
+        fields.add(field);
     }
 
     public void createTextField(Element e) {
@@ -68,7 +69,7 @@ public class EditPanel extends JPanel {
     }
 
     public void save() {
-        for (Field f : components) {
+        for (Field f : fields) {
             try {
                 f.commitEdit();
             } catch (ParseException ex) {
@@ -81,6 +82,31 @@ public class EditPanel extends JPanel {
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    @Override
+    public Dimension getPreferredScrollableViewportSize() {
+        return super.getPreferredSize(); //tell the JScrollPane that we want to be our 'preferredSize' - but later, we'll say that vertically, it should scroll.
+    }
+
+    @Override
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return 16;//set to 16 because that's what you had in your code.
+    }
+
+    @Override
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+        return 16;//set to 16 because that's what you had set in your code.
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportWidth() {
+        return this.getMinimumSize().width < this.getWidth();
+    }
+
+    @Override
+    public boolean getScrollableTracksViewportHeight() {
+        return false; //we don't want to track the height, because we want to scroll vertically.
     }
 
 }

@@ -63,6 +63,10 @@ public class Project {
         GibbedsTools.convert(mvdollXml);
         GibbedsTools.smallPack(file);
     }
+    
+    public void close(){
+        FileTools.deleteFolder(this.file);
+    }
 
     public EditPanel getPanel(int index) {
         return panels.get(index);
