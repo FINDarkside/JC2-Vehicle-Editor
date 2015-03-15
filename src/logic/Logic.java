@@ -24,7 +24,7 @@ public class Logic {
 
     private File defaultSavePath = new File(currentPath + "\\Dropzone");
     private File customSavePath = new File("C:\\Program Files (x86)\\Steam\\SteamApps\\common\\Just Cause 2\\DrOpZoNe\\Vehicles");
-    private File savePath = customSavePath;
+    private File savePath = defaultSavePath;
 
     private Project currentProject;
     private Map<File, Project> projects = new HashMap<>();
@@ -39,7 +39,7 @@ public class Logic {
 
     public void test() {
 
-        File test = new File("C:\\Program Files (x86)\\Steam\\SteamApps\\common\\Just Cause 2\\DrOpZoNe\\Vehicles\\lave.v034_sport_buggy.eez");
+        File test = new File(currentPath+"\\Files\\Vehicles\\Cars\\lave.v001_sedan.eez");
 
         loadFile(test);
 
@@ -53,6 +53,9 @@ public class Logic {
         }
 
         boolean newVehicle = f.getAbsolutePath().contains(currentPath + "\\Files\\Vehicles\\");
+        System.out.println(currentPath + "\\Files\\Vehicles\\");
+        System.out.println(currentPath);
+        System.out.println(newVehicle);
 
         File unpacked;
         Project project;
@@ -113,14 +116,14 @@ public class Logic {
     }
 
     public void cleanDefaultVehicleFolder() {
-        for (File f : new File(Settings.currentPath + "\\Files\\Vehicles").listFiles()) {
+        /*for (File f : new File(Settings.currentPath + "\\Files\\Vehicles").listFiles()) {
             for (File f2 : f.listFiles()) {
                 if (f2.isDirectory()) {
                     System.out.println("Deleting " + f2.getAbsolutePath());
                     FileTools.deleteFolder(f2);
                 }
             }
-        }
+        }*/
     }
 
     public void close() {
@@ -130,6 +133,7 @@ public class Logic {
         if (Settings.deleteUnpackedOnExit) {
             closeAllProjects();
         }
+        form.saveState();
     }
 
 }

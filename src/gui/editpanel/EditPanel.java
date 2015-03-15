@@ -1,5 +1,7 @@
 package gui.editpanel;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.text.ParseException;
@@ -17,13 +19,14 @@ import org.w3c.dom.Node;
  *
  * @author FINDarkside
  */
-public class EditPanel extends JPanel implements Scrollable {
+public class EditPanel extends JPanel implements Scrollable{
 
     private List<Field> fields = new ArrayList<>();
 
     protected List<String> text;
 
     public EditPanel(String name) {
+        this.setBackground(Color.WHITE);
         this.setName(name);
         this.setLayout(new MigLayout("wrap 2", "", "30"));
 
@@ -58,7 +61,7 @@ public class EditPanel extends JPanel implements Scrollable {
 
         Field field = new Field(e, dataType);
         field.setValue(e.getTextContent());
-        this.add(field, "width 50:500, height 25, gapleft 10");
+        this.add(field, "width 100:200, height 25, gapleft 10");
         fields.add(field);
     }
 
@@ -85,18 +88,38 @@ public class EditPanel extends JPanel implements Scrollable {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        Dimension preferredSize = super.getPreferredSize();
+        Component parent = getParent();
+
+        if (parent == null) {
+            return preferredSize;
+        }
+
+        Dimension parentSize = parent.getSize();
+        Dimension minimumSize = getMinimumSize();
+
+        int width = Math.min(preferredSize.width, parentSize.width);
+        width = Math.max(width, minimumSize.width);
+
+        int height = Math.max(super.getPreferredSize().height, parent.getHeight());
+
+        return new Dimension(width, height);
+    }
+
+    @Override
     public Dimension getPreferredScrollableViewportSize() {
-        return super.getPreferredSize(); //tell the JScrollPane that we want to be our 'preferredSize' - but later, we'll say that vertically, it should scroll.
+        return super.getPreferredSize();
     }
 
     @Override
     public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-        return 16;//set to 16 because that's what you had in your code.
+        return 16;
     }
 
     @Override
     public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-        return 16;//set to 16 because that's what you had set in your code.
+        return 16;
     }
 
     @Override
@@ -106,7 +129,7 @@ public class EditPanel extends JPanel implements Scrollable {
 
     @Override
     public boolean getScrollableTracksViewportHeight() {
-        return false; //we don't want to track the height, because we want to scroll vertically.
+        return false;
     }
 
 }

@@ -11,7 +11,6 @@ import javax.xml.transform.*;
 
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import jdk.nashorn.internal.runtime.regexp.joni.constants.NodeType;
 import logic.NodeArrayList;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
