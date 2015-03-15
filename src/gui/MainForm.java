@@ -5,15 +5,26 @@ import gui.filetree.FileTreeModel;
 import gui.filetree.SelectionListener;
 import java.awt.Color;
 import java.awt.Font;
-import logic.*;
+import java.awt.Rectangle;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import logic.*;
 import logic.dictionaries.FieldsDictionary;
 import logic.dictionaries.VehicleNames;
 import net.miginfocom.swing.MigLayout;
@@ -29,30 +40,39 @@ public class MainForm extends javax.swing.JFrame {
 
     private ImageContainer imageContainer;
 
-    /**
-     * Creates new form MainForm
-     *///
     @SuppressWarnings("LeakingThisInConstructor")
-    public MainForm(Logic logic) {
-
+    public MainForm(Logic logic)  {
         this.logic = logic;
-        this.getContentPane().setBackground(new Color(255, 255, 255));
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            StackTracePrinter.handle(e);
-        }
-
-        logic.setForm(this);
 
         initComponents();
         customInit();
-
         setIcons();
+        loadProperties();
 
+        logic.setForm(this);
         logic.test();
+    }
 
+    private void loadProperties() {
+        File f = new File(Settings.currentPath + "\\Files\\form.property");
+        if (!f.exists()) {
+            return;
+        }
+
+        Properties p = new Properties();
+        InputStream in;
+        try {
+            in = new FileInputStream(f);
+            p.load(in);
+        } catch (IOException ex) {
+            StackTracePrinter.handle(ex);
+
+            return;
+        }
+
+        setSize(Integer.parseInt(p.getProperty("width")), Integer.parseInt(p.getProperty("height")));
+        setState(Integer.parseInt(p.getProperty("state")));
+        jSplitPane1.setLastDividerLocation(Integer.parseInt(p.getProperty("dividerLocation")));
     }
 
     private void setIcons() {
@@ -74,9 +94,7 @@ public class MainForm extends javax.swing.JFrame {
         fileChooserContainer = new javax.swing.JScrollPane();
         mainPanel = new javax.swing.JPanel();
         modelContainer = new javax.swing.JPanel();
-        menuContainer = new javax.swing.JPanel();
-        editPanelSelector = new javax.swing.JComboBox<EditPanel>();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        panelContainer = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         mNewFile = new javax.swing.JMenuItem();
@@ -85,6 +103,8 @@ public class MainForm extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Just Cause 2 Vehicle Editor "+Settings.version);
+        setBackground(new java.awt.Color(255, 255, 255));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -99,48 +119,34 @@ public class MainForm extends javax.swing.JFrame {
         modelContainer.setLayout(modelContainerLayout);
         modelContainerLayout.setHorizontalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
         );
         modelContainerLayout.setVerticalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 150, Short.MAX_VALUE)
+            .addGap(0, 155, Short.MAX_VALUE)
         );
 
-        editPanelSelector.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editPanelSelectorActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout menuContainerLayout = new javax.swing.GroupLayout(menuContainer);
-        menuContainer.setLayout(menuContainerLayout);
-        menuContainerLayout.setHorizontalGroup(
-            menuContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(editPanelSelector, 0, 756, Short.MAX_VALUE)
-        );
-        menuContainerLayout.setVerticalGroup(
-            menuContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(menuContainerLayout.createSequentialGroup()
-                .addComponent(editPanelSelector, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        panelContainer.setBackground(javax.swing.UIManager.getDefaults().getColor("CheckBox.light"));
+        panelContainer.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        panelContainer.setFocusable(false);
+        panelContainer.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menuContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jScrollPane1)
-            .addComponent(modelContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(modelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(modelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(menuContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
-                .addComponent(jScrollPane1))
+                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
         jSplitPane1.setRightComponent(mainPanel);
@@ -186,7 +192,7 @@ public class MainForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+            .addComponent(jSplitPane1)
         );
 
         pack();
@@ -195,10 +201,6 @@ public class MainForm extends javax.swing.JFrame {
     private void mNewFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mNewFileActionPerformed
 
     }//GEN-LAST:event_mNewFileActionPerformed
-
-    private void editPanelSelectorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editPanelSelectorActionPerformed
-        setEditPanel((EditPanel) editPanelSelector.getSelectedItem());
-    }//GEN-LAST:event_editPanelSelectorActionPerformed
 
     private void mSaveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mSaveFileActionPerformed
         logic.saveCurrentProject();
@@ -209,7 +211,6 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosing
 
     private void customInit() {
-        jScrollPane1.getVerticalScrollBar().setUnitIncrement(16);
 
         initPictureContainer();
         UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "\\Files\\Icons\\new.png"));
@@ -257,14 +258,39 @@ public class MainForm extends javax.swing.JFrame {
         modelContainer.add(b, "align center");
     }
 
-    public void setEditPanel(JPanel panel) {
-        jScrollPane1.setViewportView(panel);
-
+    public void setEditPanels(List<EditPanel> panels) {
+        panelContainer.removeAll();
+        int i = 0;
+        for (EditPanel p : panels) {
+            JScrollPane sp = new JScrollPane();
+            sp.setViewportView(p);
+            sp.setBorder(null);
+            panelContainer.add(p.getName(), sp);
+            panelContainer.setBackgroundAt(i, Color.red);
+            i++;
+        }
     }
 
-    public void setEditPanels(List<EditPanel> panels) {
-        editPanelSelector.setModel(new DefaultComboBoxModel(panels.toArray()));
-        editPanelSelector.setSelectedIndex(0);
+    public void saveState() {
+        Properties p = new Properties();
+        p.setProperty("width", Integer.toString(getWidth()));
+        p.setProperty("height", Integer.toString(getHeight()));
+        p.setProperty("state", Integer.toString(getState()));
+        p.setProperty("dividerLocation", Integer.toString(jSplitPane1.getDividerLocation()));
+
+        try {
+            File f = new File(currentPath + "\\Files\\form.property");
+            if (!f.exists()) {
+                f.createNewFile();
+            }
+            OutputStream out = new FileOutputStream(new File(currentPath + "\\Files\\form.property"));
+
+            p.store(out, "test");
+        } catch (IOException ex) {
+            StackTracePrinter.handle(ex);
+            System.out.println("öö");
+        }
+
     }
 
     public static void main(String args[]) {
@@ -286,9 +312,14 @@ public class MainForm extends javax.swing.JFrame {
         //</editor-fold>
 
         //</editor-fold>
-
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            StackTracePrinter.handle(e);
+        }
         /* Create and display the form */
         setupGlobalExceptionHandling();
+
         try {
             VehicleNames.init();
             FieldsDictionary.init();
@@ -315,18 +346,16 @@ public class MainForm extends javax.swing.JFrame {
 
     private javax.swing.JPanel editPanelContainer;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<EditPanel> editPanelSelector;
     private javax.swing.JScrollPane fileChooserContainer;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JMenuItem mNewFile;
     private javax.swing.JMenuItem mOpenFile;
     private javax.swing.JMenuItem mSaveFile;
     private javax.swing.JPanel mainPanel;
-    private javax.swing.JPanel menuContainer;
     private javax.swing.JPanel modelContainer;
+    private javax.swing.JTabbedPane panelContainer;
     // End of variables declaration//GEN-END:variables
 }
