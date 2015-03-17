@@ -4,6 +4,7 @@ import jtools.FileTools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Dictionary {
 
     public Dictionary(File file, boolean inverted) throws IOException {
 
-        List<String> text = FileTools.readFile(file);
+        List<String> text = Files.readAllLines(file.toPath());
 
         for (String s : text) {
             String key, value;

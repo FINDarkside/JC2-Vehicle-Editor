@@ -21,7 +21,7 @@ import org.xml.sax.SAXException;
  */
 public class Project {
 
-    private File file;
+    public  File file;
     private List<EditPanel> panels = new ArrayList<>();
     private File mvdoll;
     private File mvdollXml;
@@ -52,6 +52,12 @@ public class Project {
         }
     }
 
+    public File getFile() {
+        return file;
+    }
+    
+    
+
     public void save() throws TransformerException, IOException, InterruptedException {
         System.out.println("Saving " + mvdollXml.getAbsolutePath());
         for (EditPanel ep : panels) {
@@ -63,8 +69,8 @@ public class Project {
         GibbedsTools.convert(mvdollXml);
         GibbedsTools.smallPack(file);
     }
-    
-    public void close(){
+
+    public void close() {
         FileTools.deleteFolder(this.file);
     }
 
@@ -80,6 +86,15 @@ public class Project {
         if (doc == null) {
             return;
         }
+
+        NodeList panelList = XmlTools.getChildElementsByTagName(parseDoc, "panel");
+        for (int i = 0; i < panelList.getLength(); i++) {
+            Element panelElement = (Element) panelList.item(i);
+            EditPanel childPanel = new EditPanel(panelElement.getAttribute("name"));
+            panel.addPanel(childPanel);
+            parseFields(doc, panelElement, childPanel);
+        }
+
         NodeList fieldsList = XmlTools.getChildElementsByTagName(parseDoc, "fields");
         NodeList docObjects = XmlTools.getChildElementsByTagName(doc, "object");
         for (int i = 0; i < fieldsList.getLength(); i++) {
@@ -97,33 +112,39 @@ public class Project {
         NodeList docValues = XmlTools.getChildElementsByTagName(doc, "value");
         for (int i = 0; i < parseValues.getLength(); i++) {
             Element targetValue = (Element) parseValues.item(i);
-            Element value = XmlTools.getElementByNameOrId(docValues, targetValue.getAttribute("name"));
-            if (value != null) {
+            Element valueElement = XmlTools.getElementByNameOrId(docValues, targetValue.getAttribute("name"));
+            if (valueElement != null) {
                 String name = targetValue.getTextContent();
                 if (name != null && !name.isEmpty()) {
-                    System.out.println("öö");
-                    panel.createTextField(value, name);
+                    panel.createTextField(valueElement, name);
                 } else {
-                    panel.createTextField(value);
+                    if (panel.getParent() != null && ((EditPanel) panel.getParent()).getChildPanelCount() != 1) {
+                        panel.createTextField(valueElement, null);
+                    } else {
+                        panel.createTextField(valueElement);
+                    }
                 }
             }
         }
     }
 
     private void parseLave() {
+        List<EditPanel> panels = new ArrayList<>();
 
         Document carFields = FieldsDictionary.getCar();
         Element root = carFields.getDocumentElement();
-        NodeList panelElements = root.getElementsByTagName("panel");
+        NodeList panelElements = XmlTools.getChildElementsByTagName(root, "panel");
         for (int i = 0; i < panelElements.getLength(); i++) {
             Element panelElement = (Element) panelElements.item(i);
             EditPanel editPanel = new EditPanel(panelElement.getAttribute("name"));
             parseFields(doc.getDefaultModules(), panelElement, editPanel);
             if (editPanel.getComponents().length != 0) {
-                this.panels.add(editPanel);
+                panels.add(editPanel);
             }
         }
 
+        this.panels = panels;
+        
     }
 
     private void parseArve() {

@@ -3,6 +3,8 @@ package logic.dictionaries;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import jtools.FileTools;
 import jtools.XmlTools;
@@ -23,12 +25,16 @@ public class FieldsDictionary {
     private static Document boat;
     private static Document plane;
 
-    public static void init() throws IOException, SAXException, ParserConfigurationException {
-        car = XmlTools.readXml(new File(Settings.currentPath + "\\Files\\Dictionary\\Fields\\Car.xml"));
-        /*bike = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Bike.xml"));
-         helicopter = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Helicopter.xml"));
-         boat = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Boat.xml"));
-         plane = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Plane.xml"));*/
+    static {
+        try {
+            car = XmlTools.readXml(new File(Settings.currentPath + "\\Files\\Dictionary\\Fields\\Car.xml"));
+            /*bike = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Bike.xml"));
+             helicopter = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Helicopter.xml"));
+             boat = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Boat.xml"));
+             plane = XmlTools.readXml(new File(Settings.currentPath+"\\Files\\Dictionary\\Fields\\Plane.xml"));*/
+        } catch (SAXException | IOException | ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static Document getCar() {

@@ -1,31 +1,24 @@
 package gui;
 
 import gui.editpanel.EditPanel;
-import gui.filetree.FileTreeModel;
-import gui.filetree.SelectionListener;
+import gui.filetree.*;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.Scanner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import jtools.FileTools;
 import logic.*;
 import logic.dictionaries.FieldsDictionary;
+import logic.dictionaries.Icons;
 import logic.dictionaries.VehicleNames;
 import net.miginfocom.swing.MigLayout;
 
@@ -34,51 +27,102 @@ import net.miginfocom.swing.MigLayout;
  * @author FINDarkside
  */
 public class MainForm extends javax.swing.JFrame {
-
+    
     private Logic logic;
     private final String currentPath = Settings.currentPath;
-
+    public FileTreeModel fileTreeModel;
+    
     private ImageContainer imageContainer;
-
+    
     @SuppressWarnings("LeakingThisInConstructor")
-    public MainForm(Logic logic)  {
+    public MainForm(Logic logic) {
         this.logic = logic;
-
+        
         initComponents();
         customInit();
         setIcons();
-        loadProperties();
-
+        
+        File properties = new File(Settings.currentPath + "\\Files\\form.property");
+        try {
+            loadProperties(properties);
+        } catch (Exception e) {
+            StackTracePrinter.handle(e, "Setting form properties failed. Corrupted " + properties.getAbsolutePath() + " deleted.");
+            properties.delete();
+        }
+        
         logic.setForm(this);
         logic.test();
     }
-
-    private void loadProperties() {
-        File f = new File(Settings.currentPath + "\\Files\\form.property");
+    
+    private void loadProperties(File f) {
         if (!f.exists()) {
             return;
         }
-
+        
         Properties p = new Properties();
         InputStream in;
         try {
             in = new FileInputStream(f);
             p.load(in);
         } catch (IOException ex) {
-            StackTracePrinter.handle(ex);
-
+            StackTracePrinter.handle(ex, "Loading form properties failed.");
             return;
         }
-
+        
         setSize(Integer.parseInt(p.getProperty("width")), Integer.parseInt(p.getProperty("height")));
         setState(Integer.parseInt(p.getProperty("state")));
-        jSplitPane1.setLastDividerLocation(Integer.parseInt(p.getProperty("dividerLocation")));
+        jSplitPane1.setDividerLocation(Integer.parseInt(p.getProperty("dividerLocation")));
+        setLocation(Integer.parseInt(p.getProperty("x")), Integer.parseInt(p.getProperty("y")));
     }
-
+    
     private void setIcons() {
-        mOpenFile.setIcon(new ImageIcon(currentPath + "/Files/Icons/open.png"));
-        mSaveFile.setIcon(new ImageIcon(currentPath + "/Files/Icons/save.png"));
-        mNewFile.setIcon(new ImageIcon(currentPath + "/Files/Icons/new.png"));
+        
+    }
+    
+    private void customInit() {
+        
+        initPictureContainer();
+        
+        FileTreeModel treeModel = new FileTreeModel(new File(currentPath + "\\Files\\Default vehicles"));
+        fileTree.setModel(treeModel);
+        fileTree.addMouseListener(new FileTreeMouseAdapter(fileTree, logic));
+        ToolTipManager.sharedInstance().registerComponent(fileTree);
+        
+        this.fileTreeModel = treeModel;
+        
+    }
+    
+    private void initPictureContainer() {
+        ImageContainer i;
+        
+        try {
+            i = new ImageContainer((BufferedImage) (ImageIO.read(new File(Settings.currentPath + "\\test.png"))));
+        } catch (IOException e) {
+            StackTracePrinter.handle(e);
+            i = new ImageContainer();
+        }
+        
+        modelContainer.setLayout(new MigLayout("insets 0"));
+        i.setVisible(true);
+        i.setBorder(BorderFactory.createLineBorder(Color.black));
+        i.setBackground(Color.WHITE);
+        
+        i.validate();
+        
+        modelContainer.add(i, "height 150:150, width 1:300, align center");
+        this.imageContainer = i;
+        
+        JButton b = new JButton("Edit model");
+        b.setFocusable(false);
+        int height = 26;
+        int width = 90;
+        
+        b.setBounds(i.getWidth() + 2, i.getHeight() - height, width, height);
+        b.addActionListener((java.awt.event.ActionEvent evt) -> {
+            logic.editModel();
+        });
+        
+        modelContainer.add(b, "align center");
     }
 
     /**
@@ -92,6 +136,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1 = new javax.swing.JSplitPane();
         fileChooserContainer = new javax.swing.JScrollPane();
+        fileTree = new javax.swing.JTree();
         mainPanel = new javax.swing.JPanel();
         modelContainer = new javax.swing.JPanel();
         panelContainer = new javax.swing.JTabbedPane();
@@ -113,6 +158,16 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setContinuousLayout(true);
+
+        fileTree.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        fileTree.setModel(null);
+        fileTree.setCellRenderer(new FileTreeRenderer());
+        fileTree.setRootVisible(false);
+        fileTree.setRowHeight(22);
+        fileTree.setScrollsOnExpand(false);
+        fileTree.setShowsRootHandles(true);
+        fileChooserContainer.setViewportView(fileTree);
+
         jSplitPane1.setLeftComponent(fileChooserContainer);
 
         javax.swing.GroupLayout modelContainerLayout = new javax.swing.GroupLayout(modelContainer);
@@ -136,9 +191,7 @@ public class MainForm extends javax.swing.JFrame {
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(modelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(mainPanelLayout.createSequentialGroup()
-                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
-                .addGap(0, 0, 0))
+            .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -151,11 +204,13 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1.setRightComponent(mainPanel);
 
+        jMenuBar1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jMenuBar1.setPreferredSize(new java.awt.Dimension(65, 25));
 
         jMenu1.setText("File");
         jMenu1.setPreferredSize(new java.awt.Dimension(65, 20));
 
+        mNewFile.setIcon(Icons.get("new"));
         mNewFile.setText("New");
         mNewFile.setPreferredSize(null);
         mNewFile.addActionListener(new java.awt.event.ActionListener() {
@@ -165,9 +220,11 @@ public class MainForm extends javax.swing.JFrame {
         });
         jMenu1.add(mNewFile);
 
+        mOpenFile.setIcon(Icons.get("open"));
         mOpenFile.setText("Open");
         jMenu1.add(mOpenFile);
 
+        mSaveFile.setIcon(Icons.get("save"));
         mSaveFile.setText("Save");
         mSaveFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -209,55 +266,7 @@ public class MainForm extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         logic.close();
     }//GEN-LAST:event_formWindowClosing
-
-    private void customInit() {
-
-        initPictureContainer();
-        UIManager.put("Tree.leafIcon", new ImageIcon(currentPath + "\\Files\\Icons\\new.png"));
-
-        JTree tree = new JTree(new FileTreeModel(new File(currentPath + "\\Files\\Vehicles")));
-        Font currentFont = tree.getFont();
-        tree.setFont(new Font(currentFont.getName(), currentFont.getStyle(), currentFont.getSize() + 4));
-        tree.setRowHeight(tree.getRowHeight() + 4);
-        tree.addTreeSelectionListener(new SelectionListener(tree, logic));
-
-        fileChooserContainer.getViewport().add(tree);
-
-    }
-
-    public void initPictureContainer() {
-        ImageContainer i;
-
-        try {
-            i = new ImageContainer((BufferedImage) (ImageIO.read(new File(Settings.currentPath + "\\test.png"))));
-        } catch (IOException e) {
-            StackTracePrinter.handle(e);
-            i = new ImageContainer();
-        }
-
-        modelContainer.setLayout(new MigLayout("insets 0"));
-        i.setVisible(true);
-        i.setBorder(BorderFactory.createLineBorder(Color.black));
-        i.setBackground(Color.WHITE);
-
-        i.validate();
-
-        modelContainer.add(i, "height 150:150, width 1:300, align center");
-        this.imageContainer = i;
-
-        JButton b = new JButton("Edit model");
-        b.setFocusable(false);
-        int height = 26;
-        int width = 90;
-
-        b.setBounds(i.getWidth() + 2, i.getHeight() - height, width, height);
-        b.addActionListener((java.awt.event.ActionEvent evt) -> {
-            logic.editModel();
-        });
-
-        modelContainer.add(b, "align center");
-    }
-
+    
     public void setEditPanels(List<EditPanel> panels) {
         panelContainer.removeAll();
         int i = 0;
@@ -270,29 +279,38 @@ public class MainForm extends javax.swing.JFrame {
             i++;
         }
     }
-
+    
     public void saveState() {
         Properties p = new Properties();
         p.setProperty("width", Integer.toString(getWidth()));
         p.setProperty("height", Integer.toString(getHeight()));
         p.setProperty("state", Integer.toString(getState()));
         p.setProperty("dividerLocation", Integer.toString(jSplitPane1.getDividerLocation()));
-
+        p.setProperty("x", Integer.toString(getX()));
+        p.setProperty("y", Integer.toString(getY()));
+        
         try {
             File f = new File(currentPath + "\\Files\\form.property");
             if (!f.exists()) {
                 f.createNewFile();
             }
             OutputStream out = new FileOutputStream(new File(currentPath + "\\Files\\form.property"));
-
-            p.store(out, "test");
+            
+            p.store(out, null);
         } catch (IOException ex) {
             StackTracePrinter.handle(ex);
-            System.out.println("öö");
         }
-
     }
-
+    
+    public void addProject(File f) {
+        fileTreeModel.addProject(f);
+    }
+    
+    public void closeProject(File f){
+        fileTreeModel.closeProject(f);
+        
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -313,29 +331,23 @@ public class MainForm extends javax.swing.JFrame {
 
         //</editor-fold>
         try {
+            MainForm.setDefaultLookAndFeelDecorated(true);
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             StackTracePrinter.handle(e);
         }
         /* Create and display the form */
         setupGlobalExceptionHandling();
-
-        try {
-            VehicleNames.init();
-            FieldsDictionary.init();
-            Settings.init();
-        } catch (Exception e) {
-            StackTracePrinter.handle(e);
-            System.exit(1);
-        }
+        
+        UIManager.put("Tree.leafIcon", Icons.get("new"));
         Logic logic = new Logic();
-
+        
         java.awt.EventQueue.invokeLater(() -> {
             new MainForm(logic).setVisible(true);
         });
-
+        
     }
-
+    
     public static void setupGlobalExceptionHandling() {
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             StackTracePrinter.handle(e);
@@ -343,10 +355,11 @@ public class MainForm extends javax.swing.JFrame {
             System.exit(1);
         });
     }
-
+    
     private javax.swing.JPanel editPanelContainer;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane fileChooserContainer;
+    private javax.swing.JTree fileTree;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

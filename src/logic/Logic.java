@@ -2,12 +2,15 @@ package logic;
 
 import logic.dictionaries.FieldsDictionary;
 import gui.MainForm;
-import gui.filetree.FileTreeModel;
 import jtools.FileTools;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import jtools.DialogTools;
 import jtools.GibbedsTools;
 import logic.dictionaries.VehicleNames;
 import org.xml.sax.SAXException;
@@ -29,43 +32,45 @@ public class Logic {
     private Project currentProject;
     private Map<File, Project> projects = new HashMap<>();
 
-    public void setForm(MainForm form) {
-        this.form = form;
-    }
-
     public Logic() {
 
     }
 
+    public void setForm(MainForm form) {
+        this.form = form;
+    }
+
     public void test() {
 
-        File test = new File(currentPath+"\\Files\\Vehicles\\Cars\\lave.v001_sedan.eez");
+    }
 
-        loadFile(test);
+    public boolean fileOpened(File f) {
+        return projects.containsKey(f);
 
     }
 
     public void loadFile(File f) {
 
-        if (projects.containsKey(f)) {
+        if (fileOpened(f)) {
             setCurrentProject(projects.get(f));
             return;
         }
 
-        boolean newVehicle = f.getAbsolutePath().contains(currentPath + "\\Files\\Vehicles\\");
-        System.out.println(currentPath + "\\Files\\Vehicles\\");
-        System.out.println(currentPath);
-        System.out.println(newVehicle);
+        boolean newVehicle = f.getAbsolutePath().startsWith(currentPath + "\\Files\\Default vehicles\\");
 
         File unpacked;
         Project project;
         try {
+            if (newVehicle) {
+                File location = new File(savePath + "\\" + f.getName());
+                if (location.exists() && !DialogTools.confirm(form, location.getAbsolutePath() + " already exists. Overwrite?", "Confirm")) {
+                    return;
+                }
+                System.out.println("Copying " + f.getAbsolutePath() + " to " + location.getAbsolutePath());
+                f = FileTools.copyFile(f, savePath);
+            }
             System.out.println("Unpacking " + f.getAbsolutePath());
             unpacked = GibbedsTools.smallUnpack(f);
-            if (newVehicle) {
-                System.out.println("Moving " + unpacked.getAbsolutePath() + " to " + savePath);
-                unpacked = FileTools.moveToFolder(unpacked, savePath);
-            }
             System.out.println("Creating new project...");
             project = new Project(unpacked);
         } catch (Exception e) {
@@ -75,6 +80,7 @@ public class Logic {
         }
         projects.put(f, project);
         setCurrentProject(project);
+        form.addProject(f);
     }
 
     public void setCurrentProject(Project project) {
@@ -91,23 +97,33 @@ public class Logic {
     }
 
     public void saveAllProjects() {
-        for (Project p : projects.values()) {
-            try {
-                p.save();
-            } catch (Exception e) {
-                StackTracePrinter.handle(e);
-            }
+        for (File f : projects.keySet()) {
+            saveProject(f);
         }
+    }
 
+    public void saveProject(File file) {
+        try {
+            projects.get(file).save();
+        } catch (Exception e) {
+            StackTracePrinter.handle(e);
+        }
     }
 
     public void closeProject(File f) {
         projects.get(f).close();
+        form.closeProject(f);
+        projects.remove(f);
+        
     }
 
     public void closeAllProjects() {
-        for (Project p : projects.values()) {
-            p.close();
+        Iterator<File> it = projects.keySet().iterator();
+        while (it.hasNext()) {
+            File f = it.next();
+            projects.get(f).close();
+            form.closeProject(f);
+            it.remove();
         }
     }
 
@@ -116,21 +132,21 @@ public class Logic {
     }
 
     public void cleanDefaultVehicleFolder() {
-        /*for (File f : new File(Settings.currentPath + "\\Files\\Vehicles").listFiles()) {
+        for (File f : new File(Settings.currentPath + "\\Files\\Default vehicles").listFiles()) {
             for (File f2 : f.listFiles()) {
                 if (f2.isDirectory()) {
                     System.out.println("Deleting " + f2.getAbsolutePath());
                     FileTools.deleteFolder(f2);
                 }
             }
-        }*/
+        }
     }
 
     public void close() {
         if (Settings.saveOnExit) {
             saveAllProjects();
         }
-        if (Settings.deleteUnpackedOnExit) {
+        if (Settings.closeProjectsOnExit) {
             closeAllProjects();
         }
         form.saveState();

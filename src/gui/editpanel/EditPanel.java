@@ -19,23 +19,23 @@ import org.w3c.dom.Node;
  *
  * @author FINDarkside
  */
-public class EditPanel extends JPanel implements Scrollable{
+public class EditPanel extends JPanel implements Scrollable {
 
     private List<Field> fields = new ArrayList<>();
-
-    protected List<String> text;
+    private List<EditPanel> childPanels = new ArrayList<>();
 
     public EditPanel(String name) {
         this.setBackground(Color.WHITE);
         this.setName(name);
-        this.setLayout(new MigLayout("wrap 2", "", "30"));
+        this.setLayout(new MigLayout("", "", "30"));
 
     }
 
     public void createTextField(Element e, String name) {
-
-        JLabel label = new JLabel(name);
-        this.add(label);
+        if (name != null) {
+            JLabel label = new JLabel(name);
+            this.add(label);
+        }
 
         DataType dataType;
 
@@ -61,7 +61,7 @@ public class EditPanel extends JPanel implements Scrollable{
 
         Field field = new Field(e, dataType);
         field.setValue(e.getTextContent());
-        this.add(field, "width 100:200, height 25, gapleft 10");
+        this.add(field, "width 100:200, height 25:25, gapleft 10, wrap, gaptop 5");
         fields.add(field);
     }
 
@@ -69,6 +69,21 @@ public class EditPanel extends JPanel implements Scrollable{
         String name = e.getAttribute("name");
         name = name.isEmpty() ? e.getAttribute("id") : name;
         createTextField(e, name);
+    }
+
+    public void addPanel(EditPanel p) {
+
+        add(new JLabel(p.getName()), "cell " + childPanels.size() * 2 + " 0, align center");
+        if (!childPanels.isEmpty()) {
+            JSeparator s = new JSeparator(JSeparator.VERTICAL);
+            add(s, "cell " + (childPanels.size() * 2 - 1) + " 1, h 100%");
+        }
+        add(p, "cell " + childPanels.size() * 2 + " 1");
+        childPanels.add(p);
+    }
+
+    public int getChildPanelCount() {
+        return childPanels.size();
     }
 
     public void save() {
@@ -79,6 +94,9 @@ public class EditPanel extends JPanel implements Scrollable{
                 StackTracePrinter.handle(ex);
             }
             f.getElement().setTextContent(f.getValue().toString());
+        }
+        for (EditPanel ep : childPanels) {
+            ep.save();
         }
     }
 

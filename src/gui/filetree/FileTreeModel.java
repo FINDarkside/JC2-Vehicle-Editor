@@ -3,111 +3,167 @@ package gui.filetree;
 import java.io.File;
 import java.util.*;
 import javax.swing.event.EventListenerList;
+import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 /**
  *
- * @author FINDarkside
+ * @author Jesse
  */
 public class FileTreeModel implements TreeModel {
 
-    private EventListenerList listeners = new EventListenerList();
-    private Item root;
-    private HashMap<Item, ArrayList<Item>> map = new HashMap<>();
+    public final static String projects = "Current projects";
 
-    public FileTreeModel(File root) {
-        this.root = new Item(root);
-        map.put(this.root, listChilds(root));
-        init(root);
+    protected FileTreeNode root;
+    protected FileTreeNode openedProjects;
+    protected FileTreeNode defaultVehicles;
+    protected EventListenerList listenerList = new EventListenerList();
+
+    public FileTreeModel(File defaultRoot) {
+        root = new FileTreeNode(new File("Root"), null);
+        defaultVehicles = new FileTreeNode(defaultRoot, root);
+        openedProjects = new FileTreeNode(new File(projects), root);
+
+        this.root.childs.add(openedProjects);
+        this.root.childs.add(defaultVehicles);
+
+        init(defaultVehicles);
     }
 
-    private void init(File root) {
-        for (File f : root.listFiles()) {
-            if (f.isFile() && f.getName().endsWith("eez")) {
-                map.put(new Item(f), new ArrayList<Item>());
-            }
-            if (f.isDirectory()) {
-                map.put(new Item(f), listChilds(f));
-                init(f);
-            }
-
+    private void init(FileTreeNode root) {
+        if (!root.getFile().isDirectory()) {
+            return;
         }
+        for (File f : root.getFile().listFiles()) {
+            FileTreeNode child = new FileTreeNode(f, root);
+            root.childs.add(child);
+            init(child);
+        }
+        Collections.sort(root.childs);
     }
 
-    private ArrayList<Item> listChilds(File root) {
-        if (root.isFile()) {
-            return null;
-        }
-        ArrayList<Item> items = new ArrayList<>();
-        File[] files = root.listFiles();
-
-        for (File f : root.listFiles()) {
-            if (!(f.isFile() && !f.getName().endsWith("eez"))) {
-                items.add(new Item(f));
-            }
-        }
-        Collections.sort(items);
-        return items;
+    public void addProject(File f) {
+        FileTreeNode node = new FileTreeNode(f, openedProjects);
+        openedProjects.childs.add(node);
+        int[] arr = {openedProjects.childs.size() - 1};
+        nodesWereInserted(openedProjects, arr);
     }
+
+    public void closeProject(File f) {
+        FileTreeNode[] node = {new FileTreeNode(f, openedProjects)};
+        int[] index = {openedProjects.getIndex(node[0])};
+        openedProjects.childs.remove(index[0]);
+        nodesWereRemoved(openedProjects, index, node);
+    }
+
+  
 
     @Override
     public Object getRoot() {
-        return this.root;
+        return root;
     }
 
     @Override
-    public Object getChild(Object o, int i) {
-        Item item = (Item) o;
-        return map.get(item).get(i);
+    public Object getChild(Object parent, int index) {
+        FileTreeNode node = (FileTreeNode) parent;
+        return node.getChildAt(index);
     }
 
     @Override
-    public int getChildCount(Object o) {
-        Item item = (Item) o;
-        return map.get(item).size();
+    public int getChildCount(Object parent) {
+        FileTreeNode node = (FileTreeNode) parent;
+        return node.getChildCount();
     }
 
     @Override
     public boolean isLeaf(Object o) {
-        Item item = (Item) o;
-        return item.getFile().isFile();
+        FileTreeNode node = (FileTreeNode) o;
+        return node.isLeaf();
     }
 
     @Override
-    public void valueForPathChanged(TreePath tp, Object o) {
+    public void valueForPathChanged(TreePath path, Object newValue) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getIndexOfChild(Object o, Object o1) {
-        Item item = (Item) o;
-        Item item2 = (Item) o1;
-
-        if (map.get(item) == null || map.get(item2) == null) {
-            return -1;
-        }
-
-        ArrayList list = map.get(item);
-
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).equals(item2)) {
-                return i;
-            }
-        }
-
-        return -1;
-
+    public int getIndexOfChild(Object parent, Object child) {
+        FileTreeNode p = (FileTreeNode) parent;
+        FileTreeNode c = (FileTreeNode) child;
+        return p.getIndex(c);
     }
 
     @Override
     public void addTreeModelListener(TreeModelListener l) {
-
+        listenerList.add(TreeModelListener.class, l);
     }
 
     @Override
-    public void removeTreeModelListener(TreeModelListener tl) {
+    public void removeTreeModelListener(TreeModelListener l) {
+        listenerList.remove(TreeModelListener.class, l);
+    }
+
+    protected TreeNode[] getPathToRoot(TreeNode aNode, int depth) {
+        TreeNode[] retNodes;
+
+        depth++;
+        if (aNode == root) {
+            retNodes = new TreeNode[depth];
+        } else {
+            retNodes = getPathToRoot(aNode.getParent(), depth);
+        }
+        retNodes[retNodes.length - depth] = aNode;
+        return retNodes;
+    }
+
+    public void nodesWereInserted(TreeNode node, int[] childIndices) {
+
+        int cCount = childIndices.length;
+        Object[] newChildren = new Object[cCount];
+
+        for (int counter = 0; counter < cCount; counter++) {
+            newChildren[counter] = node.getChildAt(childIndices[counter]);
+        }
+        fireTreeNodesInserted(this, getPathToRoot(node, 0), childIndices, newChildren);
 
     }
 
+    public void nodesWereRemoved(TreeNode node, int[] childIndices, Object[] removedChildren) {
+        if (node != null && childIndices != null) {
+            fireTreeNodesRemoved(this, getPathToRoot(node, 0), childIndices, removedChildren);
+        }
+    }
+
+    protected void fireTreeNodesInserted(Object source, Object[] path, int[] childIndices, Object[] children) {
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == TreeModelListener.class) {
+                if (e == null) {
+                    e = new TreeModelEvent(source, path, childIndices, children);
+                }
+                ((TreeModelListener) listeners[i + 1]).treeNodesInserted(e);
+            }
+        }
+    }
+
+    protected void fireTreeNodesRemoved(Object source, Object[] path, int[] childIndices, Object[] children) {
+
+        Object[] listeners = listenerList.getListenerList();
+        TreeModelEvent e = null;
+
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == TreeModelListener.class) {
+                if (e == null) {
+                    e = new TreeModelEvent(source, path,
+                            childIndices, children);
+                }
+                ((TreeModelListener) listeners[i + 1]).treeNodesRemoved(e);
+            }
+        }
+    }
 }

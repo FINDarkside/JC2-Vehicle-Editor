@@ -14,7 +14,7 @@ public class Settings {
     public static final String version = "";
     
     public static File blender = null;
-    public static boolean deleteUnpackedOnExit = true;
+    public static boolean closeProjectsOnExit = true;
     public static boolean saveXmlInEez = true;
     public static boolean saveOnExit = false;
     
@@ -34,7 +34,7 @@ public class Settings {
             StackTracePrinter.handle(ex);
             return System.getProperty("user.dir");
         }
-        if (path.contains("JC2-Vehicle-Editor\\build")) {
+        if (path.contains("JC2 Vehicle Editor\\build")) {
             return path.substring(0, path.indexOf("\\build"));
         } else {
             return path;

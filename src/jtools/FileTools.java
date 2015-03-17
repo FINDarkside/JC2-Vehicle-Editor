@@ -24,14 +24,12 @@ public class FileTools {
     public static ArrayList<String> readFile(File file) throws IOException {
 
         ArrayList<String> result = new ArrayList<>();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
-
-        String str;
-        while ((str = reader.readLine()) != null) {
-            result.add(str);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
+            String str;
+            while ((str = reader.readLine()) != null) {
+                result.add(str);
+            }
         }
-        reader.close();
         return result;
     }
 
@@ -82,50 +80,11 @@ public class FileTools {
             f.createNewFile();
         }
 
-        PrintWriter writer = new PrintWriter(f, "UTF-8");
-        for (String s : file) {
-            writer.println(s);
+        try (PrintWriter writer = new PrintWriter(f, "UTF-8")) {
+            for (String s : file) {
+                writer.println(s);
+            }
         }
-        writer.close();
-    }
-
-    public static File chooseFile(String ext, String startPath) {
-
-        java.awt.Frame f = null;
-        FileDialog fc = new FileDialog(f, "Select file");
-
-        fc.setFile("*." + ext);
-        fc.setDirectory(startPath);
-        fc.setVisible(true);
-
-        String directory = fc.getDirectory();
-        String name = fc.getFile();
-        File file = (name != null) ? new File(directory + "\\" + name) : null;
-        
-        return file;
-    }
-
-    public static String choosePath(String startPath) {
-
-        JFileChooser fc = new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setDialogTitle("Select save location");
-        fc.setCurrentDirectory(new File(startPath.substring(0, startPath.lastIndexOf("\\"))));
-
-        File file = null;
-        do {
-            int returnVal = fc.showOpenDialog(null);
-            if (returnVal != JFileChooser.APPROVE_OPTION) {
-                return null;
-            }
-
-            file = fc.getSelectedFile();
-            if (!file.isDirectory()) {
-                JOptionPane.showMessageDialog(null, "Select a folder");
-            }
-        } while (!file.isDirectory());
-
-        return file.getAbsolutePath();
     }
 
     public static List<File> listFilesInFolder(File folder) {
@@ -137,7 +96,7 @@ public class FileTools {
                 results.add(file);
             }
         }
-        
+
         return results;
     }
 
@@ -156,6 +115,18 @@ public class FileTools {
             }
         }
         folder.delete();
+    }
+
+    public static File copyFile(File file, File folder) throws IOException {
+
+        File newFile = new File(folder.getAbsolutePath() + "\\" + file.getName());
+
+        if (newFile.exists()) {
+            deleteFolder(newFile);
+        }
+
+        Files.copy(file.toPath(), newFile.toPath(), REPLACE_EXISTING);
+        return newFile;
     }
 
 }

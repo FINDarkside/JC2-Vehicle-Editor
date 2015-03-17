@@ -60,42 +60,45 @@
 			<value name="LiftCoefficent"></value>
 		</fields>
 	</panel>
-	<panel name="Front wheels">
-		<fields root="99BC8593">
-			<value name="armour"></value>
-			<value name="broken_friction"></value>
-			<value name="broken_mass"></value>
-			<value name="broken_radius"></value>
-			<value name="friction"></value>
-			<value name="hitpoints"></value>
-			<value name="mass"></value>
-			<value name="max_friction"></value>
-			<value name="radius"></value>
-			<value name="sink_friction_coeff"></value>
-			<value name="slip_angle"></value>
-			<value name="wheel_axis"></value>
-			<value name="wheel_nr"></value>
-			<value name="width"></value>
-			<value name="viscosity"></value>
-		</fields>
+	<panel name="Wheels">
+		<panel name="Front wheels">
+			<fields root="99BC8593">
+				<value name="armour"></value>
+				<value name="broken_friction"></value>
+				<value name="broken_mass"></value>
+				<value name="broken_radius"></value>
+				<value name="friction"></value>
+				<value name="hitpoints"></value>
+				<value name="mass"></value>
+				<value name="max_friction"></value>
+				<value name="radius"></value>
+				<value name="sink_friction_coeff"></value>
+				<value name="slip_angle"></value>
+				<value name="wheel_axis"></value>
+				<value name="wheel_nr"></value>
+				<value name="width"></value>
+				<value name="viscosity"></value>
+			</fields>
+		</panel>
+			<panel name="Back wheels">
+			<fields root="683F81F2">
+				<value name="armour"></value>
+				<value name="broken_friction"></value>
+				<value name="broken_mass"></value>
+				<value name="broken_radius"></value>
+				<value name="friction"></value>
+				<value name="hitpoints"></value>
+				<value name="mass"></value>
+				<value name="max_friction"></value>
+				<value name="radius"></value>
+				<value name="sink_friction_coeff"></value>
+				<value name="slip_angle"></value>
+				<value name="wheel_axis"></value>
+				<value name="wheel_nr"></value>
+				<value name="width"></value>
+				<value name="viscosity"></value>
+			</fields>
+		</panel>
 	</panel>
-		<panel name="Back wheels">
-		<fields root="683F81F2">
-			<value name="armour"></value>
-			<value name="broken_friction"></value>
-			<value name="broken_mass"></value>
-			<value name="broken_radius"></value>
-			<value name="friction"></value>
-			<value name="hitpoints"></value>
-			<value name="mass"></value>
-			<value name="max_friction"></value>
-			<value name="radius"></value>
-			<value name="sink_friction_coeff"></value>
-			<value name="slip_angle"></value>
-			<value name="wheel_axis"></value>
-			<value name="wheel_nr"></value>
-			<value name="width"></value>
-			<value name="viscosity"></value>
-		</fields>
-	</panel>
+	
 </panels>
