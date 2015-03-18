@@ -1,5 +1,6 @@
 package gui;
 
+import com.sun.javafx.iio.ImageStorage;
 import gui.editpanel.EditPanel;
 import gui.filetree.*;
 import java.awt.Color;
@@ -102,17 +103,6 @@ public class MainForm extends javax.swing.JFrame {
         modelContainer.add(i, "height 150:150, width 1:300, align center");
         this.imageContainer = i;
 
-        JButton b = new JButton("Edit model");
-        b.setFocusable(false);
-        int height = 26;
-        int width = 90;
-
-        b.setBounds(i.getWidth() + 2, i.getHeight() - height, width, height);
-        b.addActionListener((java.awt.event.ActionEvent evt) -> {
-            logic.editModel();
-        });
-
-        modelContainer.add(b, "align center");
     }
 
     /**
@@ -257,11 +247,18 @@ public class MainForm extends javax.swing.JFrame {
         logic.close();
     }//GEN-LAST:event_formWindowClosing
 
-    public void setEditPanels(List<EditPanel> panels) {
-        panelContainer.removeAll();
-        if (panels == null) {
+    public void setProject(Project project) {
+        if (project == null) {
+            panelContainer.removeAll();
+            imageContainer.setImage(new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
+            imageContainer.repaint();
             return;
         }
+
+        List<EditPanel> panels = project.getPanels();
+
+        panelContainer.removeAll();
+
         int i = 0;
         for (EditPanel p : panels) {
             JScrollPane sp = new JScrollPane();
@@ -271,6 +268,9 @@ public class MainForm extends javax.swing.JFrame {
             panelContainer.setBackgroundAt(i, Color.red);
             i++;
         }
+
+        imageContainer.setImage(new File(Settings.currentPath + "\\Files\\Vehicle images\\" + project.file.getName() + ".jpg"));
+        imageContainer.repaint();
     }
 
     public void saveState() {

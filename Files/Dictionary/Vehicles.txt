@@ -64,7 +64,7 @@ lave.v050_large_super_truck:URGA-9380
 lave.v052_classic:Makoto MZ 250
 lave.v052_motorcross:Makoto MZ 260X
 lave.v055_vespa:Mosca 125 Performance
-lave.v056_atv:Shimuzu Traclin
+lave.v056_atv:Shimuzu Tracline
 lave.v056_atv_world:Shimuzu
 lave.v108_armored_transport:SAAS PP30 Ox
 lave.v109_limo:Columbi Excelsior

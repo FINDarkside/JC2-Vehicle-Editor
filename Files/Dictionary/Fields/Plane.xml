@@ -20,6 +20,29 @@
 			<value name="rotor_trust_smooth"></value>
 		</fields>
 	</panel>
+	<panel name="Engine">
+		<fields root="872FCC18">
+			<value name="1AD460F8"></value>
+			<value name="28A5D089"></value>
+			<value name="2936B4B4"></value>
+			<value name="BD6148C1"></value>
+			<value name="C522F10D"></value>
+			<value name="D40D6067"></value>
+			<value name="EC5A5E47"></value>
+		</fields>
+	</panel>
+	<panel name="Damage">
+		<fields root="A6DB0131">
+			<value name="bullet_armor"></value>
+			<value name="deform_scale"></value>
+			<value name="explosion_armor"></value>
+			<value name="explosion_threshold"></value>
+			<value name="glass_armor"></value>
+			<value name="impact_armor"></value>
+			<value name="max_health"></value>
+			<value name="metal_armor"></value>
+		</fields>
+	</panel>
 	<panel name="Wheels">
 		<panel name="Front">
 			<fields root="99BC8593">
@@ -56,6 +79,7 @@
 				<value name="wheel_axis"></value>
 				<value name="wheel_nr"></value>
 				<value name="width"></value>
+				<value name="viscosity"></value>
 			</fields>
 		</panel>
 	</panel>
@@ -84,16 +108,5 @@
 				</fields>
 			</fields>
 		</panel>
-	</panel>
-	<panel name="Engine">
-		<fields root="872FCC18">
-			<value name="1AD460F8"></value>
-			<value name="28A5D089"></value>
-			<value name="2936B4B4"></value>
-			<value name="BD6148C1"></value>
-			<value name="C522F10D"></value>
-			<value name="D40D6067"></value>
-			<value name="EC5A5E47"></value>
-		</fields>
 	</panel>
 </panels>

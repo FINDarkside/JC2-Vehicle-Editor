@@ -83,6 +83,10 @@ public class EditPanel extends JPanel implements Scrollable {
         return childPanels.size();
     }
 
+    public boolean isEmpty() {
+        return childPanels.isEmpty() && fields.isEmpty();
+    }
+
     public void save() {
         for (Field f : fields) {
             try {

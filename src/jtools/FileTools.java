@@ -81,11 +81,11 @@ public class FileTools {
         }
     }
 
-    public static List<File> listFilesInFolder(File folder) {
+    public static List<File> listAllFiles(File folder) {
         List<File> results = new ArrayList<>();
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
-                results.addAll(listFilesInFolder(file));
+                results.addAll(listAllFiles(file));
             } else {
                 results.add(file);
             }

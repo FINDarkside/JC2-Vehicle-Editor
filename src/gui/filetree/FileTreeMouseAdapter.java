@@ -14,10 +14,12 @@ public class FileTreeMouseAdapter extends MouseAdapter {
 
     private JTree tree;
     private Logic logic;
+    FileTreePopupMenu popupMenu;
 
     public FileTreeMouseAdapter(JTree tree, Logic logic) {
         this.tree = tree;
         this.logic = logic;
+        popupMenu = new FileTreePopupMenu(tree, logic);
     }
 
     @Override
@@ -47,7 +49,7 @@ public class FileTreeMouseAdapter extends MouseAdapter {
                 }
             }
         } else if (SwingUtilities.isRightMouseButton(e)) {
-            new FileTreePopupMenu(tree, logic).show(tree, e.getX(), e.getY());
+            popupMenu.show(tree, e.getX(), e.getY());
         }
     }
 }

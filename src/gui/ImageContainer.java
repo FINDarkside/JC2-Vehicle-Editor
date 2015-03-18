@@ -2,7 +2,13 @@ package gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import logic.StackTracePrinter;
 
 /**
  *
@@ -29,6 +35,17 @@ public class ImageContainer extends JPanel {
         g.dispose();
 
         this.img = resizedImage;
+    }
+
+    public void setImage(File f) {
+        BufferedImage img;
+        try {
+            img = ImageIO.read(f);
+        } catch (IOException ex) {
+            StackTracePrinter.handle(ex, "Failed to load vehicle image for " + f.getName());
+            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+        }
+        setImage(img);
     }
 
     @Override

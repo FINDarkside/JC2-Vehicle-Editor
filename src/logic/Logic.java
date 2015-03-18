@@ -81,7 +81,7 @@ public class Logic {
 
     public void setCurrentProject(Project project) {
         currentProject = project;
-        form.setEditPanels(project.getPanels());
+        form.setProject(project);
     }
 
     public void saveCurrentProject() {
@@ -108,7 +108,8 @@ public class Logic {
 
     public void closeProject(File f) {
         if (isCurrentProject(f)) {
-            form.setEditPanels(null);
+            form.setProject(null);
+            currentProject = null;
         }
         projects.get(f).close();
         form.closeProject(f);
@@ -117,14 +118,13 @@ public class Logic {
     }
 
     public void closeAllProjects() {
-        Iterator<File> it = projects.keySet().iterator();
-        while (it.hasNext()) {
-            File f = it.next();
+        for (File f : projects.keySet()) {
             projects.get(f).close();
             form.closeProject(f);
-            it.remove();
         }
-        form.setEditPanels(null);
+        projects.clear();
+        form.setProject(null);
+        currentProject = null;
     }
 
     public void editModel() {

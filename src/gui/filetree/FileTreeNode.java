@@ -3,7 +3,7 @@ package gui.filetree;
 import java.io.File;
 import java.util.*;
 import javax.swing.tree.TreeNode;
-import logic.dictionaries.VehicleNames;
+import logic.dictionaries.Vehicles;
 
 /**
  *
@@ -32,7 +32,7 @@ public class FileTreeNode implements Comparable<FileTreeNode>, TreeNode {
         if (!file.isFile()) {
             return fileName;
         }
-        String s = VehicleNames.getName(fileName.substring(0, fileName.lastIndexOf('.')));
+        String s = Vehicles.getName(fileName.substring(0, fileName.lastIndexOf('.')));
         return s != null ? s : fileName;
     }
 

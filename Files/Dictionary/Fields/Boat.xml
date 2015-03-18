@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <panels>
+	<panel name="General">
+		<fields root="CBoatGeneralModule">
+			<value name="angular_damping"></value>
+			<value name="boyancy"></value>
+			<value name="center_of_mass"></value>
+			<value name="chassi_mass"></value>
+			<value name="drag"></value>
+			<value name="frontal_area"></value>
+			<value name="linear_damping"></value>
+			<value name="unit_inertia_pitch"></value>
+			<value name="unit_inertia_roll"></value>
+			<value name="unit_inertia_yaw"></value>
+		</fields>
+	</panel>
 	<panel name="Engine">
 		<fields root="77C74753">
 			<value name="acceleration"></value>

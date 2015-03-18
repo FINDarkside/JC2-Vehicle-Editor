@@ -61,7 +61,7 @@
 		</fields>
 	</panel>
 	<panel name="Wheels">
-		<panel name="Front wheels">
+		<panel name="Front">
 			<fields root="99BC8593">
 				<value name="armour"></value>
 				<value name="broken_friction"></value>
@@ -80,7 +80,7 @@
 				<value name="viscosity"></value>
 			</fields>
 		</panel>
-		<panel name="Back wheels">
+		<panel name="Back">
 			<fields root="683F81F2">
 				<value name="armour"></value>
 				<value name="broken_friction"></value>

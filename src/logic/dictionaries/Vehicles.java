@@ -3,12 +3,13 @@ package logic.dictionaries;
 import java.io.File;
 import java.io.IOException;
 import logic.Settings;
+import logic.dictionaries.VehicleType;
 
 /**
  *
  * @author FINDarkside
  */
-public class VehicleNames {
+public class Vehicles {
 
     private static Dictionary fileToName;
     private static Dictionary nameToFile;
@@ -28,5 +29,18 @@ public class VehicleNames {
 
     public static String getFile(String name) {
         return nameToFile.get(name);
+    }
+
+    public static VehicleType getVehicleType(File f) {
+        String name = f.getName();
+        if (name.startsWith("seve")) {
+            return VehicleType.BOAT;
+        }
+        if (name.startsWith("arve")) {
+            return name.contains("plane") || name.contains("jet") ? VehicleType.PLANE : VehicleType.HELICOPTER;
+        }
+
+        int vehNum = Integer.parseInt(name.substring(6, 9));
+        return vehNum == 6 || vehNum == 7 || vehNum == 52 || vehNum == 55 ? VehicleType.BIKE : VehicleType.CAR;
     }
 }
