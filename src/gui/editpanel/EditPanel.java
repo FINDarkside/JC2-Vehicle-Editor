@@ -6,14 +6,11 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.text.ParseException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import logic.DataType;
 import logic.StackTracePrinter;
 import net.miginfocom.swing.MigLayout;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  *

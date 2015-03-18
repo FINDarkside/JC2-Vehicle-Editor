@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<panels>
+	<panel name="Global">
+		<fields root="C47A759C">
+			<value name="air_density"></value>
+			<value name="boyancy"></value>
+		</fields>
+	</panel>
+	<panel name="Physical">
+		<fields root="CHelicopterPhysicalBaseModule">
+			<value name="angular_damping"></value>
+			<value name="center_of_mass"></value>
+			<value name="chassi_mass"></value>
+			<value name="extra_forward_force"></value>
+			<value name="extra_side_force"></value>
+			<value name="frontal_area"></value>
+			<value name="linear_damping"></value>
+			<value name="rotor_acc_multipler"></value>
+			<value name="rotor_acc_rpm"></value>
+			<value name="rotor_blur_rpm"></value>
+			<value name="rotor_blur_threshold_rpm"></value>
+			<value name="rotor_deacc_freespin_multiplier"></value>
+			<value name="rotor_deacc_multiplier"></value>
+			<value name="rotor_freespin_control"></value>
+			<value name="rotor_max_rpm"></value>
+			<value name="rotor_trust_smooth"></value>
+		</fields>
+	</panel>
+	<panel name="Aerodynamics">
+			<fields root="1DA8EE5F">
+				<fields root="99CED300">
+					<value name="center_point"></value>
+					<value name="drag_coeff"></value>
+					<value name="frontal_area"></value>
+					<value name="height_coeff"></value>
+					<value name="lift_coeff"></value>
+					<value name="normal"></value>
+				</fields>
+			</fields>
+	</panel>
+	<panel name="Engine">
+		<fields root="872FCC18">
+			<value name="1AD460F8"></value>
+			<value name="28A5D089"></value>
+			<value name="2936B4B4"></value>
+			<value name="BD6148C1"></value>
+			<value name="C522F10D"></value>
+			<value name="D40D6067"></value>
+			<value name="EC5A5E47"></value>
+		</fields>
+	</panel>
+	<panel name="Wheels">
+		<fields root="99BC8593">
+			<value name="armour"></value>
+			<value name="broken_friction"></value>
+			<value name="broken_mass"></value>
+			<value name="broken_radius"></value>
+			<value name="friction"></value>
+			<value name="hitpoints"></value>
+			<value name="mass"></value>
+			<value name="max_friction"></value>
+			<value name="radius"></value>
+			<value name="sink_friction_coeff"></value>
+			<value name="slip_angle"></value>
+			<value name="wheel_axis"></value>
+			<value name="wheel_nr"></value>
+			<value name="width"></value>
+			<value name="viscosity"></value>
+		</fields>
+	</panel>
+	<panel name="Suspension">
+		<fields root="99BC8593">
+			<fields root="89598B52">
+				<value name="antirollbar_strength"></value>
+				<value name="compression"></value>
+				<value name="direction"></value>
+				<value name="length"></value>
+				<value name="relaxation"></value>
+				<value name="strength"></value>
+			</fields>
+		</fields>
+	</panel>
+	<panel name="Damage">
+		<fields root="A6DB0131">
+			<value name="bullet_armor"></value>
+			<value name="deform_scale"></value>
+			<value name="explosion_armor"></value>
+			<value name="explosion_threshold"></value>
+			<value name="glass_armor"></value>
+			<value name="impact_armor"></value>
+			<value name="max_health"></value>
+			<value name="metal_armor"></value>
+		</fields>
+	</panel>
+</panels>

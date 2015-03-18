@@ -3,23 +3,13 @@ package gui;
 import gui.editpanel.EditPanel;
 import gui.filetree.*;
 import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.Font;
-import java.awt.Rectangle;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import jtools.FileTools;
 import logic.*;
-import logic.dictionaries.FieldsDictionary;
 import logic.dictionaries.Icons;
-import logic.dictionaries.VehicleNames;
 import net.miginfocom.swing.MigLayout;
 
 /**
@@ -27,21 +17,21 @@ import net.miginfocom.swing.MigLayout;
  * @author FINDarkside
  */
 public class MainForm extends javax.swing.JFrame {
-    
+
     private Logic logic;
     private final String currentPath = Settings.currentPath;
     public FileTreeModel fileTreeModel;
-    
+
     private ImageContainer imageContainer;
-    
+
     @SuppressWarnings("LeakingThisInConstructor")
     public MainForm(Logic logic) {
         this.logic = logic;
-        
+
         initComponents();
         customInit();
         setIcons();
-        
+
         File properties = new File(Settings.currentPath + "\\Files\\form.property");
         try {
             loadProperties(properties);
@@ -49,16 +39,16 @@ public class MainForm extends javax.swing.JFrame {
             StackTracePrinter.handle(e, "Setting form properties failed. Corrupted " + properties.getAbsolutePath() + " deleted.");
             properties.delete();
         }
-        
+
         logic.setForm(this);
         logic.test();
     }
-    
+
     private void loadProperties(File f) {
         if (!f.exists()) {
             return;
         }
-        
+
         Properties p = new Properties();
         InputStream in;
         try {
@@ -68,60 +58,60 @@ public class MainForm extends javax.swing.JFrame {
             StackTracePrinter.handle(ex, "Loading form properties failed.");
             return;
         }
-        
+
         setSize(Integer.parseInt(p.getProperty("width")), Integer.parseInt(p.getProperty("height")));
         setState(Integer.parseInt(p.getProperty("state")));
         jSplitPane1.setDividerLocation(Integer.parseInt(p.getProperty("dividerLocation")));
         setLocation(Integer.parseInt(p.getProperty("x")), Integer.parseInt(p.getProperty("y")));
     }
-    
+
     private void setIcons() {
-        
+
     }
-    
+
     private void customInit() {
-        
+
         initPictureContainer();
-        
+
         FileTreeModel treeModel = new FileTreeModel(new File(currentPath + "\\Files\\Default vehicles"));
         fileTree.setModel(treeModel);
         fileTree.addMouseListener(new FileTreeMouseAdapter(fileTree, logic));
         ToolTipManager.sharedInstance().registerComponent(fileTree);
-        
+
         this.fileTreeModel = treeModel;
-        
+
     }
-    
+
     private void initPictureContainer() {
         ImageContainer i;
-        
+
         try {
             i = new ImageContainer((BufferedImage) (ImageIO.read(new File(Settings.currentPath + "\\test.png"))));
         } catch (IOException e) {
             StackTracePrinter.handle(e);
             i = new ImageContainer();
         }
-        
+
         modelContainer.setLayout(new MigLayout("insets 0"));
         i.setVisible(true);
         i.setBorder(BorderFactory.createLineBorder(Color.black));
         i.setBackground(Color.WHITE);
-        
+
         i.validate();
-        
+
         modelContainer.add(i, "height 150:150, width 1:300, align center");
         this.imageContainer = i;
-        
+
         JButton b = new JButton("Edit model");
         b.setFocusable(false);
         int height = 26;
         int width = 90;
-        
+
         b.setBounds(i.getWidth() + 2, i.getHeight() - height, width, height);
         b.addActionListener((java.awt.event.ActionEvent evt) -> {
             logic.editModel();
         });
-        
+
         modelContainer.add(b, "align center");
     }
 
@@ -266,9 +256,12 @@ public class MainForm extends javax.swing.JFrame {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         logic.close();
     }//GEN-LAST:event_formWindowClosing
-    
+
     public void setEditPanels(List<EditPanel> panels) {
         panelContainer.removeAll();
+        if (panels == null) {
+            return;
+        }
         int i = 0;
         for (EditPanel p : panels) {
             JScrollPane sp = new JScrollPane();
@@ -279,7 +272,7 @@ public class MainForm extends javax.swing.JFrame {
             i++;
         }
     }
-    
+
     public void saveState() {
         Properties p = new Properties();
         p.setProperty("width", Integer.toString(getWidth()));
@@ -288,29 +281,28 @@ public class MainForm extends javax.swing.JFrame {
         p.setProperty("dividerLocation", Integer.toString(jSplitPane1.getDividerLocation()));
         p.setProperty("x", Integer.toString(getX()));
         p.setProperty("y", Integer.toString(getY()));
-        
+
         try {
             File f = new File(currentPath + "\\Files\\form.property");
             if (!f.exists()) {
                 f.createNewFile();
             }
             OutputStream out = new FileOutputStream(new File(currentPath + "\\Files\\form.property"));
-            
+
             p.store(out, null);
         } catch (IOException ex) {
             StackTracePrinter.handle(ex);
         }
     }
-    
+
     public void addProject(File f) {
         fileTreeModel.addProject(f);
     }
-    
-    public void closeProject(File f){
+
+    public void closeProject(File f) {
         fileTreeModel.closeProject(f);
-        
     }
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -338,16 +330,16 @@ public class MainForm extends javax.swing.JFrame {
         }
         /* Create and display the form */
         setupGlobalExceptionHandling();
-        
+
         UIManager.put("Tree.leafIcon", Icons.get("new"));
         Logic logic = new Logic();
-        
+
         java.awt.EventQueue.invokeLater(() -> {
             new MainForm(logic).setVisible(true);
         });
-        
+
     }
-    
+
     public static void setupGlobalExceptionHandling() {
         Thread.setDefaultUncaughtExceptionHandler((Thread t, Throwable e) -> {
             StackTracePrinter.handle(e);
@@ -355,7 +347,7 @@ public class MainForm extends javax.swing.JFrame {
             System.exit(1);
         });
     }
-    
+
     private javax.swing.JPanel editPanelContainer;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane fileChooserContainer;

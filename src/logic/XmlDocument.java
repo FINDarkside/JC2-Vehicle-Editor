@@ -2,12 +2,9 @@ package logic;
 
 import java.io.File;
 import java.io.IOException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import jtools.XmlTools;
 import org.w3c.dom.*;
-import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**

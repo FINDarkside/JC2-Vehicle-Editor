@@ -80,7 +80,7 @@
 				<value name="viscosity"></value>
 			</fields>
 		</panel>
-			<panel name="Back wheels">
+		<panel name="Back wheels">
 			<fields root="683F81F2">
 				<value name="armour"></value>
 				<value name="broken_friction"></value>
@@ -100,5 +100,52 @@
 			</fields>
 		</panel>
 	</panel>
-	
+	<panel name="Brakes">
+		<panel name="Front">
+			<fields root="99BC8593">
+				<fields root="22BC2BA5">
+					<value name="handbrake"></value>
+					<value name="max_brake_torque"></value>
+					<value name="min_time_to_block"></value>
+					<value name="power_distribution"></value>
+				</fields>
+			</fields>
+		</panel>
+		<panel name="Back">
+			<fields root="683F81F2">
+				<fields root="22BC2BA5">
+					<value name="handbrake"></value>
+					<value name="max_brake_torque"></value>
+					<value name="min_time_to_block"></value>
+					<value name="power_distribution"></value>
+				</fields>
+			</fields>
+		</panel>
+	</panel>	
+	<panel name="Suspension">
+		<panel name="Front">
+			<fields root="99BC8593">
+				<fields root="89598B52">
+					<value name="antirollbar_strength"></value>
+					<value name="compression"></value>
+					<value name="direction"></value>
+					<value name="length"></value>
+					<value name="relaxation"></value>
+					<value name="strength"></value>
+				</fields>
+			</fields>
+		</panel>
+		<panel name="Back">
+			<fields root="683F81F2">
+				<fields root="89598B52">
+					<value name="antirollbar_strength"></value>
+					<value name="compression"></value>
+					<value name="direction"></value>
+					<value name="length"></value>
+					<value name="relaxation"></value>
+					<value name="strength"></value>
+				</fields>
+			</fields>
+		</panel>
+	</panel>
 </panels>

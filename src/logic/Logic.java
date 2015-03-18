@@ -1,19 +1,11 @@
 package logic;
 
-import logic.dictionaries.FieldsDictionary;
 import gui.MainForm;
 import jtools.FileTools;
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import jtools.DialogTools;
 import jtools.GibbedsTools;
-import logic.dictionaries.VehicleNames;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -46,23 +38,27 @@ public class Logic {
 
     public boolean fileOpened(File f) {
         return projects.containsKey(f);
+    }
 
+    public boolean isCurrentProject(File f) {
+        return projects.get(f) == currentProject;
     }
 
     public void loadFile(File f) {
 
-        if (fileOpened(f)) {
-            setCurrentProject(projects.get(f));
+        boolean newVehicle = f.getAbsolutePath().startsWith(currentPath + "\\Files\\Default vehicles\\");
+        File location = new File(newVehicle ? savePath + "\\" + f.getName() : f.getAbsolutePath());
+
+        if (fileOpened(location)) {
+            setCurrentProject(projects.get(location));
             return;
         }
-
-        boolean newVehicle = f.getAbsolutePath().startsWith(currentPath + "\\Files\\Default vehicles\\");
 
         File unpacked;
         Project project;
         try {
             if (newVehicle) {
-                File location = new File(savePath + "\\" + f.getName());
+
                 if (location.exists() && !DialogTools.confirm(form, location.getAbsolutePath() + " already exists. Overwrite?", "Confirm")) {
                     return;
                 }
@@ -111,10 +107,13 @@ public class Logic {
     }
 
     public void closeProject(File f) {
+        if (isCurrentProject(f)) {
+            form.setEditPanels(null);
+        }
         projects.get(f).close();
         form.closeProject(f);
         projects.remove(f);
-        
+
     }
 
     public void closeAllProjects() {
@@ -125,6 +124,7 @@ public class Logic {
             form.closeProject(f);
             it.remove();
         }
+        form.setEditPanels(null);
     }
 
     public void editModel() {

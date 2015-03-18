@@ -1,10 +1,8 @@
 package gui.editpanel;
 
-import java.text.NumberFormat;
 import javax.swing.JFormattedTextField;
 import logic.DataType;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  *

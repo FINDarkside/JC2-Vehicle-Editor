@@ -1,15 +1,9 @@
 package jtools;
 
-import java.awt.FileDialog;
 import java.io.*;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import static java.nio.file.StandardCopyOption.*;
 
 /**
