@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import logic.*;
@@ -84,23 +86,15 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     private void initPictureContainer() {
-        ImageContainer i;
-
-        try {
-            i = new ImageContainer((BufferedImage) (ImageIO.read(new File(Settings.currentPath + "\\test.png"))));
-        } catch (IOException e) {
-            StackTracePrinter.handle(e);
-            i = new ImageContainer();
-        }
+        ImageContainer i = new ImageContainer();
 
         modelContainer.setLayout(new MigLayout("insets 0"));
         i.setVisible(true);
-        i.setBorder(BorderFactory.createLineBorder(Color.black));
         i.setBackground(Color.WHITE);
 
         i.validate();
 
-        modelContainer.add(i, "height 150:150, width 1:300, align center");
+        modelContainer.add(i, "height 150:150, width 1:999999, align center");
         this.imageContainer = i;
 
     }
@@ -150,11 +144,13 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(fileChooserContainer);
 
+        modelContainer.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
         javax.swing.GroupLayout modelContainerLayout = new javax.swing.GroupLayout(modelContainer);
         modelContainer.setLayout(modelContainerLayout);
         modelContainerLayout.setHorizontalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 756, Short.MAX_VALUE)
+            .addGap(0, 752, Short.MAX_VALUE)
         );
         modelContainerLayout.setVerticalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -178,7 +174,7 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(modelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -304,6 +300,7 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     public static void main(String args[]) {
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

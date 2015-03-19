@@ -33,7 +33,7 @@ public class Settings {
             StackTracePrinter.handle(ex);
             return System.getProperty("user.dir");
         }
-        if (path.contains("JC2 Vehicle Editor\\build")) {
+        if (path.endsWith("\\build")) {
             return path.substring(0, path.indexOf("\\build"));
         } else {
             return path;

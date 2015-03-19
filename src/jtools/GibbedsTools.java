@@ -33,10 +33,17 @@ public class GibbedsTools {
         Process p;
         p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
         p.waitFor();
+        int exVal = p.exitValue();
+        if (exVal != 0) {
+            if (exVal == -2146232576) {
+                throw new RuntimeException("GibbedsTools requires .NET framework");
+            }
+            throw new RuntimeException("SmallUnpack quit with exit value " + exVal);
+        }
 
         File result = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1) + file.getName().substring(0, file.getName().lastIndexOf('.')) + "_unpack");
         result = FileTools.renameFile(result, result.getName().substring(0, result.getName().lastIndexOf('_')));
-        
+
         return result;
     }
 
@@ -53,6 +60,13 @@ public class GibbedsTools {
         Process p;
         p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe\" \"" + file.getAbsolutePath() + "\"\"");
         p.waitFor();
+        int exVal = p.exitValue();
+        if (exVal != 0) {
+            if (exVal == -2146232576) {
+                throw new RuntimeException("GibbedsTools requires .NET framework");
+            }
+            throw new RuntimeException("SmallUnpack quit with exit value " + exVal);
+        }
 
         File result = new File(file.getAbsolutePath() + ".sarc");
         return FileTools.renameFile(result, changeFileExtension(result, "eez").getName());
@@ -78,16 +92,19 @@ public class GibbedsTools {
         p.waitFor();
 
         File file2 = changeFileExtension(file, extension.equals("xml") ? "bin" : "xml");
-        if(!file2.exists()){
+        if (!file2.exists()) {
             file2 = changeFileExtension(file2, "mvdoll");
         }
-        if(!file2.exists()){
+        if (!file2.exists()) {
             file2 = changeFileExtension(file2, "vdoll");
         }
 
         int exVal = p.exitValue();
         if (exVal != 0) {
-            throw new RuntimeException(binConverter.getName() + " returned " + exVal);
+            if (exVal == -2146232576) {
+                throw new RuntimeException("GibbedsTools requires .NET framework");
+            }
+            throw new RuntimeException("SmallUnpack quit with exit value " + exVal);
         }
 
         return file2;

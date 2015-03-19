@@ -17,7 +17,7 @@ lave.v002_combi:Sakura Aquila Space
 lave.v002_police:Vaultier Patrolman
 lave.v002_sedan:Sakura Aquila City
 lave.v002_sedan_taxi:Sakura Aguila Forte
-lave.v002_sport:Sakura Aquila Metro
+lave.v002_sport:Sakura Aquila Metro ST
 lave.v003_cover:Chevalier Traveller SD
 lave.v003_hardtop:Chevalier Express HT
 lave.v003_icecream:Chevalier Piazza IX
@@ -49,7 +49,7 @@ lave.v023_customcar:Poloma Renegade
 lave.v024_sportscar:Garret Traver-Z
 lave.v025_sportcar:Titus ZJ
 lave.v028_luxuary_sportcar:Civadier 999
-lave.v030_super_sportcar:Mancini Cavallo
+lave.v030_super_sportcar:Mancini Cavallo 1001
 lave.v034_sport_buggy:Stinger Dunebug
 lave.v035_sport_custom:Boyd Fireflame 544
 lave.v036_city_jeep:Dalton N90

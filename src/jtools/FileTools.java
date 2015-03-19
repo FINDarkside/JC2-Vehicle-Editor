@@ -2,6 +2,7 @@ package jtools;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import static java.nio.file.StandardCopyOption.*;
@@ -50,9 +51,15 @@ public class FileTools {
         if (newFile.exists()) {
             deleteFolder(newFile);
         }
-        if (!file.renameTo(newFile)) {
-            throw new IOException("Renaming " + file.getName() + " to " + newFile.getName() + " failed.");
-        }
+        /*if (!file.renameTo(newFile)) {
+         throw new IOException("Renaming " + file.getName() + " to " + newFile.getName() + " failed.");
+         }*/
+
+        Path dir = file.toPath().getParent();
+
+        Path fn = file.toPath().getFileSystem().getPath(name);
+        Path target = (dir == null) ? fn : dir.resolve(fn);
+        Files.move(file.toPath(), target);
         return newFile;
     }
 

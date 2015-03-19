@@ -16,22 +16,26 @@ import logic.StackTracePrinter;
  */
 public class ImageContainer extends JPanel {
 
-    private Image img;
-    int IMG_WIDTH = 400;
-    int IMG_HEIGHT = 150;
+    private BufferedImage img;
+    private double imgScale;
+    private int imgHeight = 150;
+    private int imgWidth = 1;
 
     public ImageContainer() {
     }
 
-    public ImageContainer(Image img) {
+    public ImageContainer(BufferedImage img) {
         setImage(img);
     }
 
-    public void setImage(Image img) {
-        BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.SCALE_DEFAULT);
+    public void setImage(BufferedImage img) {
+        imgScale = (double) imgHeight / img.getHeight();
+        imgWidth = (int) (img.getWidth() * imgScale);
+
+        BufferedImage resizedImage = new BufferedImage(imgWidth, imgHeight, BufferedImage.SCALE_SMOOTH);
         Graphics2D g = resizedImage.createGraphics();
         g.setComposite(AlphaComposite.Src);
-        g.drawImage(img, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+        g.drawImage(img, 0, 0, imgWidth, imgHeight, null);
         g.dispose();
 
         this.img = resizedImage;
@@ -58,6 +62,11 @@ public class ImageContainer extends JPanel {
             g.drawImage(img, x, y, null);
         }
 
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(imgWidth, imgHeight);
     }
 
 }
