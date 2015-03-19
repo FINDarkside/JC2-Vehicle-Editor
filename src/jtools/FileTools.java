@@ -51,15 +51,12 @@ public class FileTools {
         if (newFile.exists()) {
             deleteFolder(newFile);
         }
-        /*if (!file.renameTo(newFile)) {
+        if (!file.renameTo(newFile)) {
          throw new IOException("Renaming " + file.getName() + " to " + newFile.getName() + " failed.");
-         }*/
+         }
 
         Path dir = file.toPath().getParent();
 
-        Path fn = file.toPath().getFileSystem().getPath(name);
-        Path target = (dir == null) ? fn : dir.resolve(fn);
-        Files.move(file.toPath(), target);
         return newFile;
     }
 
