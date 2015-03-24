@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import static java.nio.file.StandardCopyOption.*;
+import logic.StackTracePrinter;
 
 /**
  *
@@ -28,14 +29,6 @@ public class FileTools {
         return result;
     }
 
-    private static File changeFileExtension(File f, String ext) {
-        String name = f.getAbsolutePath();
-        int i = name.lastIndexOf(".");
-        name = name.substring(0, i) + "." + ext;
-        f = new File(name);
-        return f;
-    }
-
     /**
      * renameFile
      *
@@ -52,10 +45,8 @@ public class FileTools {
             deleteFolder(newFile);
         }
         if (!file.renameTo(newFile)) {
-         throw new IOException("Renaming " + file.getName() + " to " + newFile.getName() + " failed.");
-         }
-
-        Path dir = file.toPath().getParent();
+            throw new IOException("Renaming " + file.getName() + " to " + newFile.getName() + " failed.");
+        }
 
         return newFile;
     }
@@ -75,7 +66,9 @@ public class FileTools {
     public static void overWrite(File f, List<String> file) throws IOException {
 
         if (!f.exists()) {
-            f.createNewFile();
+            if (!f.createNewFile()) {
+                throw new IOException("Creating " + f.getAbsolutePath() + " failed");
+            }
         }
 
         try (PrintWriter writer = new PrintWriter(f, "UTF-8")) {

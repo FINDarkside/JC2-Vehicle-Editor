@@ -18,7 +18,7 @@ public class ImageContainer extends JPanel {
 
     private BufferedImage img;
     private double imgScale;
-    private int imgHeight = 150;
+    private int imgHeight = 170;
     private int imgWidth = 1;
 
     public ImageContainer() {
@@ -34,7 +34,7 @@ public class ImageContainer extends JPanel {
 
         BufferedImage resizedImage = new BufferedImage(imgWidth, imgHeight, BufferedImage.SCALE_SMOOTH);
         Graphics2D g = resizedImage.createGraphics();
-        g.setComposite(AlphaComposite.Src);
+        g.setRenderingHints(new RenderingHints(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY));
         g.drawImage(img, 0, 0, imgWidth, imgHeight, null);
         g.dispose();
 
@@ -56,8 +56,8 @@ public class ImageContainer extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (img != null) {
-            int x = (this.getWidth() - img.getWidth(null)) / 2;
-            int y = (this.getHeight() - img.getHeight(null)) / 2;
+            int x = (this.getWidth() - img.getWidth()) / 2;
+            int y = 0;
 
             g.drawImage(img, x, y, null);
         }

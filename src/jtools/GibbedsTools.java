@@ -15,13 +15,21 @@ public class GibbedsTools {
 
     private static File changeFileExtension(File f, String ext) {
         String name = f.getAbsolutePath();
-        int i = name.lastIndexOf(".");
+        int i = name.lastIndexOf('.');
         name = name.substring(0, i) + "." + ext;
         f = new File(name);
         return f;
     }
 
     public static File smallUnpack(File file) throws InterruptedException, IOException {
+        String path = file.getAbsolutePath();
+        return smallUnpack(file, file.getParentFile());
+    }
+
+    public static File smallUnpack(File file, File folder) throws InterruptedException, IOException {
+
+        File result = new File(folder.getAbsolutePath() + "\\" + file.getName().substring(0, file.getName().lastIndexOf('.')));
+
         if (!file.exists()) {
             throw new FileNotFoundException(file.getAbsolutePath() + " does not exist");
         }
@@ -30,8 +38,8 @@ public class GibbedsTools {
             throw new FileNotFoundException(smallUnpack.getAbsolutePath() + " does not exist");
         }
 
-        Process p;
-        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
+        System.out.println("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\" \"" + result.getAbsolutePath() + "\"\"");
+        Process p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\" \"" + result.getAbsolutePath() + "\"\"");
         p.waitFor();
         int exVal = p.exitValue();
         if (exVal != 0) {
@@ -40,9 +48,6 @@ public class GibbedsTools {
             }
             throw new RuntimeException("SmallUnpack quit with exit value " + exVal);
         }
-
-        File result = new File(file.getAbsolutePath().substring(0, file.getAbsolutePath().lastIndexOf('\\') + 1) + file.getName().substring(0, file.getName().lastIndexOf('.')) + "_unpack");
-        result = FileTools.renameFile(result, result.getName().substring(0, result.getName().lastIndexOf('_')));
 
         return result;
     }
@@ -57,8 +62,7 @@ public class GibbedsTools {
             throw new FileNotFoundException(smallPack.getAbsolutePath() + " does not exist");
         }
 
-        Process p;
-        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe\" \"" + file.getAbsolutePath() + "\"\"");
+        Process p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + currentPath + "\\Files\\GibbedsTools\\Gibbed.Avalanche.SmallPack.exe\" \"" + file.getAbsolutePath() + "\"\"");
         p.waitFor();
         int exVal = p.exitValue();
         if (exVal != 0) {
@@ -85,10 +89,9 @@ public class GibbedsTools {
         }
 
         String name = file.getName();
-        String extension = name.substring(name.lastIndexOf(".") + 1, name.length());
+        String extension = name.substring(name.lastIndexOf('.') + 1, name.length());
 
-        Process p;
-        p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + binConverter.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
+        Process p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + binConverter.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\"\"");
         p.waitFor();
 
         File file2 = changeFileExtension(file, extension.equals("xml") ? "bin" : "xml");

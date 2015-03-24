@@ -19,7 +19,7 @@ public class Icons {
         for (File f : FileTools.listAllFiles(root)) {
             String name = f.getName();
             if (name.endsWith(".png")) {
-                icons.put(name.substring(0, name.lastIndexOf(".")), new ImageIcon(f.getAbsolutePath()));
+                icons.put(name.substring(0, name.lastIndexOf('.')), new ImageIcon(f.getAbsolutePath()));
             }
         }
     }

@@ -19,18 +19,31 @@ import org.xml.sax.SAXException;
  */
 public class Project {
 
-    public File file;
+    private File eez;
+    private File unpacked;
     private File mvdoll;
     private File mvdollXml;
 
     private XmlDocument doc;
     private List<EditPanel> panels = new ArrayList<>();
 
-    public Project(File file) throws IOException, InterruptedException, ParserConfigurationException, SAXException {
+    boolean isDefaultVehicle;
 
-        this.file = file;
+    public Project(File file) throws InterruptedException, IOException, ParserConfigurationException, SAXException {
 
-        for (File f : file.listFiles()) {
+        isDefaultVehicle = file.getAbsolutePath().startsWith(Settings.currentPath + "\\Files\\Default vehicles\\");
+
+        if (file.isFile()) {
+            if (isDefaultVehicle) {
+                unpacked = GibbedsTools.smallUnpack(file, new File(Settings.currentPath + "\\tmp"));
+            } else {
+                unpacked = GibbedsTools.smallUnpack(file);
+            }
+        } else {
+            unpacked = file;
+        }
+
+        for (File f : unpacked.listFiles()) {
             if (f.getName().endsWith(".mvdoll") || f.getName().endsWith(".vdoll")) {
                 this.mvdoll = f;
                 break;
@@ -45,11 +58,11 @@ public class Project {
     }
 
     public File getFile() {
-        return file;
+        return unpacked;
     }
 
     public void save() throws TransformerException, IOException, InterruptedException {
-        System.out.println("Saving " + mvdollXml.getAbsolutePath());
+        System.out.println("Saving " + unpacked.getAbsolutePath());
         for (EditPanel ep : panels) {
             ep.save();
         }
@@ -57,11 +70,11 @@ public class Project {
         XmlTools.saveDocument(doc.getDocument(), mvdollXml);
 
         GibbedsTools.convert(mvdollXml);
-        GibbedsTools.smallPack(file);
+        GibbedsTools.smallPack(unpacked);
     }
 
     public void close() {
-        FileTools.deleteFolder(this.file);
+        FileTools.deleteFolder(this.unpacked);
     }
 
     public EditPanel getPanel(int index) {
@@ -70,6 +83,21 @@ public class Project {
 
     public List<EditPanel> getPanels() {
         return panels;
+    }
+
+    private void parse(Document parseXml) {
+
+        Element root = parseXml.getDocumentElement();
+        NodeList panelElements = XmlTools.getChildElementsByTagName(root, "panel");
+        for (int i = 0; i < panelElements.getLength(); i++) {
+            Element panelElement = (Element) panelElements.item(i);
+            EditPanel editPanel = new EditPanel(panelElement.getAttribute("name"));
+            parseFields(doc.getDefaultModules(), panelElement, editPanel);
+            if (editPanel.getComponents().length != 0) {
+                panels.add(editPanel);
+            }
+        }
+
     }
 
     private void parseFields(Element doc, Element parseDoc, EditPanel panel) {
@@ -118,21 +146,6 @@ public class Project {
                 }
             }
         }
-    }
-
-    private void parse(Document parseXml) {
-
-        Element root = parseXml.getDocumentElement();
-        NodeList panelElements = XmlTools.getChildElementsByTagName(root, "panel");
-        for (int i = 0; i < panelElements.getLength(); i++) {
-            Element panelElement = (Element) panelElements.item(i);
-            EditPanel editPanel = new EditPanel(panelElement.getAttribute("name"));
-            parseFields(doc.getDefaultModules(), panelElement, editPanel);
-            if (editPanel.getComponents().length != 0) {
-                panels.add(editPanel);
-            }
-        }
-
     }
 
 }

@@ -56,7 +56,7 @@ public class DialogTools {
         JFileChooser fc = new JFileChooser();
         fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fc.setDialogTitle("Choose directory");
-        fc.setCurrentDirectory(new File(startPath.substring(0, startPath.lastIndexOf("\\"))));
+        fc.setCurrentDirectory(new File(startPath.substring(0, startPath.lastIndexOf('\\'))));
 
         File file = null;
         do {

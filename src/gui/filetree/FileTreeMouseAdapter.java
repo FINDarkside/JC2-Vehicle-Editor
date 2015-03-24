@@ -16,6 +16,8 @@ public class FileTreeMouseAdapter extends MouseAdapter {
     private Logic logic;
     FileTreePopupMenu popupMenu;
 
+    FileTreeNode lastClicked;
+
     public FileTreeMouseAdapter(JTree tree, Logic logic) {
         this.tree = tree;
         this.logic = logic;
@@ -36,6 +38,7 @@ public class FileTreeMouseAdapter extends MouseAdapter {
         }
         tree.setSelectionRow(selRow);
         FileTreeNode node = (FileTreeNode) tree.getLastSelectedPathComponent();
+
         if (node == null) {
             return;
         }
@@ -44,12 +47,14 @@ public class FileTreeMouseAdapter extends MouseAdapter {
             if (node.isLeaf()) {
                 if (logic.fileOpened(node.getFile())) {
                     logic.loadFile(node.getFile());
-                } else if (e.getClickCount() == 2) {
+                } else if (e.getClickCount() >= 2 && lastClicked == node) {
                     logic.loadFile(node.getFile());
                 }
             }
         } else if (SwingUtilities.isRightMouseButton(e)) {
             popupMenu.show(tree, e.getX(), e.getY());
         }
+
+        lastClicked = node;
     }
 }

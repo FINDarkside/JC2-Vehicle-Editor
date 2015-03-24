@@ -53,9 +53,8 @@ public class MainForm extends javax.swing.JFrame {
         }
 
         Properties p = new Properties();
-        InputStream in;
-        try {
-            in = new FileInputStream(f);
+
+        try (InputStream in = new FileInputStream(f)) {
             p.load(in);
         } catch (IOException ex) {
             StackTracePrinter.handle(ex, "Loading form properties failed.");
@@ -90,11 +89,10 @@ public class MainForm extends javax.swing.JFrame {
 
         modelContainer.setLayout(new MigLayout("insets 0"));
         i.setVisible(true);
-        i.setBackground(Color.WHITE);
 
         i.validate();
 
-        modelContainer.add(i, "height 150:150, width 1:999999, align center");
+        modelContainer.add(i, "height 100%, width 1:999999, align center");
         this.imageContainer = i;
 
     }
@@ -144,17 +142,17 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(fileChooserContainer);
 
-        modelContainer.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        modelContainer.setPreferredSize(new java.awt.Dimension(756, 170));
 
         javax.swing.GroupLayout modelContainerLayout = new javax.swing.GroupLayout(modelContainer);
         modelContainer.setLayout(modelContainerLayout);
         modelContainerLayout.setHorizontalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 752, Short.MAX_VALUE)
+            .addGap(0, 756, Short.MAX_VALUE)
         );
         modelContainerLayout.setVerticalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 155, Short.MAX_VALUE)
+            .addGap(0, 170, Short.MAX_VALUE)
         );
 
         panelContainer.setBackground(javax.swing.UIManager.getDefaults().getColor("CheckBox.light"));
@@ -174,7 +172,7 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(modelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                 .addGap(0, 0, 0))
         );
 
@@ -255,17 +253,14 @@ public class MainForm extends javax.swing.JFrame {
 
         panelContainer.removeAll();
 
-        int i = 0;
         for (EditPanel p : panels) {
             JScrollPane sp = new JScrollPane();
             sp.setViewportView(p);
             sp.setBorder(null);
             panelContainer.add(p.getName(), sp);
-            panelContainer.setBackgroundAt(i, Color.red);
-            i++;
         }
 
-        imageContainer.setImage(new File(Settings.currentPath + "\\Files\\Vehicle images\\" + project.file.getName() + ".jpg"));
+        imageContainer.setImage(new File(Settings.currentPath + "\\Files\\Vehicle images\\" + project.getFile().getName() + ".jpg"));
         imageContainer.repaint();
     }
 
@@ -318,7 +313,14 @@ public class MainForm extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        //</editor-fold>
+        File tmp = new File(Settings.currentPath + "\\tmp");
+        if (!tmp.exists()) {
+            if(!tmp.mkdir()){
+                StackTracePrinter.handle(new IOException("Failed to create "+tmp.getAbsolutePath()));
+                System.exit(3);
+            }
+        }
+
         try {
             MainForm.setDefaultLookAndFeelDecorated(true);
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
