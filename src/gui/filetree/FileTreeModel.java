@@ -8,6 +8,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import logic.Project;
 
 /**
  *
@@ -23,9 +24,9 @@ public class FileTreeModel implements TreeModel {
     protected EventListenerList listenerList = new EventListenerList();
 
     public FileTreeModel(File defaultRoot) {
-        root = new FileTreeNode(new File("Root"), null);
-        defaultVehicles = new FileTreeNode(defaultRoot, root);
-        openedProjects = new FileTreeNode(new File(projects), root);
+        root = new FileNode(new File("Root"), null);
+        defaultVehicles = new FileNode(defaultRoot, root);
+        openedProjects = new FileNode(new File(projects), root);
 
         this.root.childs.add(openedProjects);
         this.root.childs.add(defaultVehicles);
@@ -38,22 +39,22 @@ public class FileTreeModel implements TreeModel {
             return;
         }
         for (File f : root.getFile().listFiles()) {
-            FileTreeNode child = new FileTreeNode(f, root);
+            FileTreeNode child = new FileNode(f, root);
             root.childs.add(child);
             init(child);
         }
         Collections.sort(root.childs);
     }
 
-    public void addProject(File f) {
-        FileTreeNode node = new FileTreeNode(f, openedProjects);
+    public void addProject(Project p) {
+        FileTreeNode node = new ProjectNode(p, openedProjects);
         openedProjects.childs.add(node);
         int[] arr = {openedProjects.childs.size() - 1};
         nodesWereInserted(openedProjects, arr);
     }
 
-    public void closeProject(File f) {
-        FileTreeNode[] node = {new FileTreeNode(f, openedProjects)};
+    public void closeProject(Project p) {
+        FileTreeNode[] node = {new ProjectNode(p, openedProjects)};
         int[] index = {openedProjects.getIndex(node[0])};
         openedProjects.childs.remove(index[0]);
         nodesWereRemoved(openedProjects, index, node);

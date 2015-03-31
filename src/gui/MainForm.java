@@ -1,15 +1,10 @@
 package gui;
 
-import com.sun.javafx.iio.ImageStorage;
 import gui.editpanel.EditPanel;
 import gui.filetree.*;
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import logic.*;
 import logic.dictionaries.Icons;
@@ -33,7 +28,6 @@ public class MainForm extends javax.swing.JFrame {
 
         initComponents();
         customInit();
-        setIcons();
 
         File properties = new File(Settings.currentPath + "\\Files\\form.property");
         try {
@@ -65,10 +59,6 @@ public class MainForm extends javax.swing.JFrame {
         setState(Integer.parseInt(p.getProperty("state")));
         jSplitPane1.setDividerLocation(Integer.parseInt(p.getProperty("dividerLocation")));
         setLocation(Integer.parseInt(p.getProperty("x")), Integer.parseInt(p.getProperty("y")));
-    }
-
-    private void setIcons() {
-
     }
 
     private void customInit() {
@@ -282,16 +272,17 @@ public class MainForm extends javax.swing.JFrame {
 
             p.store(out, null);
         } catch (IOException ex) {
+            
             StackTracePrinter.handle(ex);
         }
     }
 
-    public void addProject(File f) {
-        fileTreeModel.addProject(f);
+    public void addProject(Project p) {
+        fileTreeModel.addProject(p);
     }
 
-    public void closeProject(File f) {
-        fileTreeModel.closeProject(f);
+    public void closeProject(Project p) {
+        fileTreeModel.closeProject(p);
     }
 
     public static void main(String args[]) {

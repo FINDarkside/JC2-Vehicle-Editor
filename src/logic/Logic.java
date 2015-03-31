@@ -6,7 +6,6 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import jtools.DialogTools;
-import jtools.GibbedsTools;
 import org.xml.sax.SAXException;
 
 /**
@@ -64,7 +63,7 @@ public class Logic {
         }
         projects.put(file, project);
         setCurrentProject(project);
-        form.addProject(file);
+        form.addProject(project);
     }
     
     public void setCurrentProject(Project project) {
@@ -92,8 +91,14 @@ public class Logic {
     
     public void saveProject(Project p) {
         try {
-            if (p.isDefaultVehicle) {
+            if (p.isDefaultVehicle()) {
+                File tmpLocation = p.getEez();
+                System.out.println(p.getEez().getAbsolutePath());
                 File location = DialogTools.chooseSaveLocation(form, p.getFile().getName(), savePath.getAbsolutePath());
+                p.save(location);
+                projects.remove(tmpLocation);
+                projects.put(p.getEez(), p);
+                System.out.println(p.getEez().getAbsolutePath());
             } else {
                 p.save();
             }
@@ -108,7 +113,7 @@ public class Logic {
             currentProject = null;
         }
         projects.get(f).close();
-        form.closeProject(f);
+        form.closeProject(projects.get(f));
         projects.remove(f);
         
     }
@@ -116,7 +121,7 @@ public class Logic {
     public void closeAllProjects() {
         for (File f : projects.keySet()) {
             projects.get(f).close();
-            form.closeProject(f);
+            form.closeProject(projects.get(f));
         }
         projects.clear();
         form.setProject(null);

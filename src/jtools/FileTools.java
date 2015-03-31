@@ -2,11 +2,9 @@ package jtools;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import static java.nio.file.StandardCopyOption.*;
-import logic.StackTracePrinter;
 
 /**
  *
@@ -58,7 +56,7 @@ public class FileTools {
             deleteFolder(newFile);
         }
 
-        Files.move(f.toPath(), newFile.toPath(), ATOMIC_MOVE);
+        Files.move(f.toPath(), newFile.toPath(), REPLACE_EXISTING);
 
         return newFile;
     }

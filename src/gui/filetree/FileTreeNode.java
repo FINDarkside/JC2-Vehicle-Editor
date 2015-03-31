@@ -9,27 +9,20 @@ import logic.dictionaries.Vehicles;
  *
  * @author FINDarkside
  */
-public class FileTreeNode implements Comparable<FileTreeNode>, TreeNode {
+public abstract class FileTreeNode implements Comparable<FileTreeNode>, TreeNode {
 
     private static List<String> order = new ArrayList<>(Arrays.asList("Cars", "Bikes", "Planes", "Helicopters", "Boats"));
 
-    private File file;
     protected final List<FileTreeNode> childs = new ArrayList<>();
-    protected final FileTreeNode parent;
+    protected FileTreeNode parent;
 
-    public FileTreeNode(File file, FileTreeNode parent) {
-        this.file = file;
-        this.parent = parent;
-    }
 
-    public File getFile() {
-        return file;
-    }
+    public abstract File getFile();
 
     @Override
     public String toString() {
-        String fileName = file.getName();
-        if (!file.isFile()) {
+        String fileName = getFile().getName();
+        if (!getFile().isFile()) {
             return fileName;
         }
         String s = Vehicles.getName(fileName.substring(0, fileName.lastIndexOf('.')));
@@ -38,18 +31,18 @@ public class FileTreeNode implements Comparable<FileTreeNode>, TreeNode {
 
     @Override
     public int compareTo(FileTreeNode node) {
-        File f2 = node.file;
+        File f2 = node.getFile();
 
-        if (file.isDirectory() && !f2.isDirectory()) {
+        if (getFile().isDirectory() && !f2.isDirectory()) {
             return -1;
         }
-        if (!file.isDirectory() && f2.isDirectory()) {
+        if (!getFile().isDirectory() && f2.isDirectory()) {
             return 1;
         }
-        if (file.isDirectory() && f2.isDirectory()) {
+        if (getFile().isDirectory() && f2.isDirectory()) {
             return order.indexOf(this.toString()) - order.indexOf(node.toString());
         }
-        return file.getName().compareTo(f2.getName());
+        return getFile().getName().compareTo(f2.getName());
     }
 
     @Override
@@ -79,7 +72,7 @@ public class FileTreeNode implements Comparable<FileTreeNode>, TreeNode {
 
     @Override
     public boolean isLeaf() {
-        return file.isFile();
+        return getFile().isFile();
     }
 
     @Override
@@ -96,14 +89,14 @@ public class FileTreeNode implements Comparable<FileTreeNode>, TreeNode {
             return false;
         }
         FileTreeNode node = (FileTreeNode) o;
-        return file.equals(node.file);
+        return getFile().equals(node.getFile());
 
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.file);
+        hash = 53 * hash + Objects.hashCode(getFile());
         return hash;
     }
 }

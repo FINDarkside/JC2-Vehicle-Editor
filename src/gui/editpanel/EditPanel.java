@@ -87,7 +87,7 @@ public class EditPanel extends JPanel implements Scrollable {
         return childPanels.isEmpty() && fields.isEmpty();
     }
 
-    public void save() {
+    public void applyChanges() {
         for (Field f : fields) {
             try {
                 f.commitEdit();
@@ -97,7 +97,7 @@ public class EditPanel extends JPanel implements Scrollable {
             f.getElement().setTextContent(f.getValue().toString());
         }
         for (EditPanel ep : childPanels) {
-            ep.save();
+            ep.applyChanges();
         }
     }
 

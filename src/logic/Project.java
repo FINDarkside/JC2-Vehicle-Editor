@@ -27,14 +27,12 @@ public class Project {
     private XmlDocument doc;
     private List<EditPanel> panels = new ArrayList<>();
 
-    boolean isDefaultVehicle;
-
     public Project(File file) throws InterruptedException, IOException, ParserConfigurationException, SAXException {
 
-        isDefaultVehicle = file.getAbsolutePath().startsWith(Settings.currentPath + "\\Files\\Default vehicles\\");
 
         if (file.isFile()) {
-            if (isDefaultVehicle) {
+            eez = file;
+            if (isDefaultVehicle()) {
                 unpacked = GibbedsTools.smallUnpack(file, new File(Settings.currentPath + "\\tmp"));
             } else {
                 unpacked = GibbedsTools.smallUnpack(file);
@@ -61,16 +59,37 @@ public class Project {
         return unpacked;
     }
 
+    public File getEez() {
+        return eez;
+    }
+    
+    public boolean isDefaultVehicle(){
+        return eez.getAbsolutePath().startsWith(Settings.currentPath + "\\Files\\Default vehicles\\");
+    }
+
     public void save() throws TransformerException, IOException, InterruptedException {
         System.out.println("Saving " + unpacked.getAbsolutePath());
         for (EditPanel ep : panels) {
-            ep.save();
+            ep.applyChanges();
         }
 
         XmlTools.saveDocument(doc.getDocument(), mvdollXml);
 
         GibbedsTools.convert(mvdollXml);
         GibbedsTools.smallPack(unpacked);
+    }
+    
+    public void save(File location) throws TransformerException, IOException, InterruptedException {
+        System.out.println("Saving " + unpacked.getAbsolutePath() + " to " + location.getAbsolutePath());
+        for (EditPanel ep : panels) {
+            ep.applyChanges();
+        }
+
+        XmlTools.saveDocument(doc.getDocument(), mvdollXml);
+        GibbedsTools.convert(mvdollXml);
+        eez = GibbedsTools.smallPack(unpacked);
+        eez = FileTools.moveToFolder(eez, location.getParentFile());
+        unpacked = FileTools.moveToFolder(unpacked, location.getParentFile());
     }
 
     public void close() {

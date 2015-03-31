@@ -27,7 +27,7 @@ public class StackTracePrinter {
 
         Object[] options = {"Save stacktrace & copy to clipboard", "Continue"};
         int n = JOptionPane.showOptionDialog(null, (info.isEmpty() ? "" : info + System.lineSeparator())
-                + t.getClass().getSimpleName() + ": " + t.getMessage() + "\nIf you don't know what caused this exception, you can save the stacktrace and post it in jc2mods forums",
+                + t.getClass().getSimpleName() + ": " + t.getMessage() ,
                 t.getClass().getSimpleName(),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.ERROR_MESSAGE,
