@@ -84,12 +84,12 @@ public class FileTreePopupMenu extends JPopupMenu {
         FileTreeNode node = (FileTreeNode) tree.getLastSelectedPathComponent();
         this.file = node.getFile();
 
-        if (file.getName().equals(FileTreeModel.projects)) {
+        if (node.getClass() == ProjectNode.class) {
+            setComponents(save, saveClose, close);
+        } else if (file.getName().equals(FileTreeModel.projects)) {
             setComponents(saveAll, saveCloseAll, closeAll);
         } else if (file.getAbsolutePath().startsWith(Settings.currentPath + "\\Files\\Default vehicles\\")) {
             setComponents(newVehicle);
-        } else if (file.getName().equals(FileTreeModel.projects)) {
-            setComponents(saveAll, saveCloseAll, closeAll);
         } else if (logic.fileOpened(file)) {
             setComponents(save, saveClose, close);
         } else if (file.isFile()) {

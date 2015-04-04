@@ -38,7 +38,6 @@ public class GibbedsTools {
             throw new FileNotFoundException(smallUnpack.getAbsolutePath() + " does not exist");
         }
 
-        System.out.println("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\" \"" + result.getAbsolutePath() + "\"\"");
         Process p = Runtime.getRuntime().exec("cmd.exe /c " + "\"\"" + smallUnpack.getAbsolutePath() + "\" \"" + file.getAbsolutePath() + "\" \"" + result.getAbsolutePath() + "\"\"");
         p.waitFor();
         int exVal = p.exitValue();

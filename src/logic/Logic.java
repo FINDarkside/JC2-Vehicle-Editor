@@ -13,45 +13,54 @@ import org.xml.sax.SAXException;
  * @author FINDarkside
  */
 public class Logic {
-    
+
     private MainForm form;
-    
+
     private final String currentPath = Settings.currentPath;
-    
+
     private File defaultSavePath = new File(currentPath + "\\Dropzone");
     private File customSavePath = new File("C:\\Program Files (x86)\\Steam\\SteamApps\\common\\Just Cause 2\\DrOpZoNe\\Vehicles");
     private File savePath = defaultSavePath;
-    
+
     private Project currentProject;
-    private Map<File, Project> projects = new HashMap<>();
-    
+    private List<Project> projects = new ArrayList<>();
+
     public Logic() {
-        
+
     }
-    
+
     public void setForm(MainForm form) {
         this.form = form;
     }
-    
+
     public void test() {
-        
+
     }
-    
+
     public boolean fileOpened(File f) {
-        return projects.containsKey(f);
+        return getProject(f) != null;
     }
-    
+
+    public Project getProject(File f) {
+        for (Project p : projects) {
+            if (p.getEez().equals(f)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
     public boolean isCurrentProject(File f) {
-        return projects.get(f) == currentProject;
+        return currentProject.getEez().equals(f);
     }
-    
+
     public void loadFile(File file) {
-        
+
         if (fileOpened(file)) {
-            setCurrentProject(projects.get(file));
+            setCurrentProject(getProject(file));
             return;
         }
-        
+
         Project project;
         try {
             System.out.println("Creating new project...");
@@ -61,16 +70,16 @@ public class Logic {
             StackTracePrinter.handle(e);
             return;
         }
-        projects.put(file, project);
+        projects.add(project);
         setCurrentProject(project);
         form.addProject(project);
     }
-    
+
     public void setCurrentProject(Project project) {
         currentProject = project;
         form.setProject(project);
     }
-    
+
     public void saveCurrentProject() {
         try {
             saveProject(currentProject);
@@ -78,27 +87,23 @@ public class Logic {
             StackTracePrinter.handle(e);
         }
     }
-    
+
     public void saveAllProjects() {
-        for (File f : projects.keySet()) {
-            saveProject(f);
+        for (Project p : projects) {
+            saveProject(p);
         }
     }
-    
+
     public void saveProject(File file) {
-        saveProject(projects.get(file));
+        saveProject(getProject(file));
     }
-    
+
     public void saveProject(Project p) {
         try {
             if (p.isDefaultVehicle()) {
                 File tmpLocation = p.getEez();
-                System.out.println(p.getEez().getAbsolutePath());
-                File location = DialogTools.chooseSaveLocation(form, p.getFile().getName(), savePath.getAbsolutePath());
+                File location = DialogTools.chooseSaveLocation(form, p.getEez().getName(), savePath.getAbsolutePath());
                 p.save(location);
-                projects.remove(tmpLocation);
-                projects.put(p.getEez(), p);
-                System.out.println(p.getEez().getAbsolutePath());
             } else {
                 p.save();
             }
@@ -106,32 +111,33 @@ public class Logic {
             StackTracePrinter.handle(e);
         }
     }
-    
+
     public void closeProject(File f) {
-        if (isCurrentProject(f)) {
+        Project project = getProject(f);
+        if (project.equals(currentProject)) {
             form.setProject(null);
             currentProject = null;
         }
-        projects.get(f).close();
-        form.closeProject(projects.get(f));
-        projects.remove(f);
-        
+        project.close();
+        form.closeProject(project);
+        projects.remove(project);
+
     }
-    
+
     public void closeAllProjects() {
-        for (File f : projects.keySet()) {
-            projects.get(f).close();
-            form.closeProject(projects.get(f));
+        for (Project p : projects) {
+            p.close();
+            form.closeProject(p);
         }
         projects.clear();
         form.setProject(null);
         currentProject = null;
     }
-    
+
     public void editModel() {
         throw new UnsupportedOperationException();
     }
-    
+
     public void cleanDefaultVehicleFolder() {
         for (File f : new File(Settings.currentPath + "\\Files\\Default vehicles").listFiles()) {
             for (File f2 : f.listFiles()) {
@@ -142,7 +148,7 @@ public class Logic {
             }
         }
     }
-    
+
     public void close() {
         if (Settings.saveOnExit) {
             saveAllProjects();
@@ -153,5 +159,5 @@ public class Logic {
         FileTools.deleteFolder(new File(Settings.currentPath + "\\tmp"));
         form.saveState();
     }
-    
+
 }

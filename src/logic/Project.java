@@ -29,7 +29,6 @@ public class Project {
 
     public Project(File file) throws InterruptedException, IOException, ParserConfigurationException, SAXException {
 
-
         if (file.isFile()) {
             eez = file;
             if (isDefaultVehicle()) {
@@ -62,8 +61,8 @@ public class Project {
     public File getEez() {
         return eez;
     }
-    
-    public boolean isDefaultVehicle(){
+
+    public boolean isDefaultVehicle() {
         return eez.getAbsolutePath().startsWith(Settings.currentPath + "\\Files\\Default vehicles\\");
     }
 
@@ -78,7 +77,7 @@ public class Project {
         GibbedsTools.convert(mvdollXml);
         GibbedsTools.smallPack(unpacked);
     }
-    
+
     public void save(File location) throws TransformerException, IOException, InterruptedException {
         System.out.println("Saving " + unpacked.getAbsolutePath() + " to " + location.getAbsolutePath());
         for (EditPanel ep : panels) {
@@ -165,6 +164,23 @@ public class Project {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        Project p = (Project) o;
+        return p.eez.equals(eez);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + Objects.hashCode(this.eez);
+        hash = 23 * hash + Objects.hashCode(this.unpacked);
+        return hash;
     }
 
 }
