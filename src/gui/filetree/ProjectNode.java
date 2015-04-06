@@ -9,7 +9,7 @@ import logic.Project;
  */
 public class ProjectNode extends FileTreeNode {
     
-    private Project project;
+    private final Project project;
     
     public ProjectNode(Project project,FileTreeNode parent){
         this.parent = parent;

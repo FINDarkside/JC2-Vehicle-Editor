@@ -80,15 +80,19 @@ public class Project {
 
     public void save(File location) throws TransformerException, IOException, InterruptedException {
         System.out.println("Saving " + unpacked.getAbsolutePath() + " to " + location.getAbsolutePath());
-        for (EditPanel ep : panels) {
-            ep.applyChanges();
+        long start = System.currentTimeMillis();
+        for (EditPanel panel : panels) {
+            panel.applyChanges();
         }
+        long stop = System.currentTimeMillis();
+        System.out.println(((double) stop - start) / 1000);
 
-        XmlTools.saveDocument(doc.getDocument(), mvdollXml);
-        GibbedsTools.convert(mvdollXml);
-        eez = GibbedsTools.smallPack(unpacked);
-        eez = FileTools.moveToFolder(eez, location.getParentFile());
         unpacked = FileTools.moveToFolder(unpacked, location.getParentFile());
+        mvdollXml = new File(unpacked.getPath() + "\\" + mvdollXml.getName());
+        XmlTools.saveDocument(doc.getDocument(), mvdollXml);
+        mvdoll = GibbedsTools.convert(mvdollXml);
+        eez = GibbedsTools.smallPack(unpacked);
+
     }
 
     public void close() {

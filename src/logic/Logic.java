@@ -126,7 +126,10 @@ public class Logic {
 
     public void closeAllProjects() {
         for (Project p : projects) {
-            p.close();
+            Runnable r = () -> {
+                p.close();
+            };
+            new Thread(r).start();
             form.closeProject(p);
         }
         projects.clear();

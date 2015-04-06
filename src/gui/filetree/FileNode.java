@@ -7,7 +7,7 @@ import java.io.File;
  * @author Jesse
  */
 public class FileNode extends FileTreeNode{
-    private File file;
+    private final File file;
 
     public FileNode(File f, FileTreeNode parent){
         this.parent = parent;

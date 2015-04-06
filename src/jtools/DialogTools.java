@@ -36,7 +36,7 @@ public class DialogTools {
 
     public static File chooseSaveLocation(JFrame parent, String fileName, String startPath) {
 
-        FileDialog fc = new FileDialog(parent, "Select file", FileDialog.SAVE);
+        FileDialog fc = new FileDialog(parent, "Select save location", FileDialog.SAVE);
 
         if (!fileName.isEmpty()) {
             fc.setFile(startPath + "\\" + fileName);

@@ -20,6 +20,8 @@ public class ImageContainer extends JPanel {
     private int imgWidth = 1;
 
     public ImageContainer() {
+        setOpaque(false);
+        setBackground(null);
     }
 
     public ImageContainer(BufferedImage img) {
@@ -40,12 +42,17 @@ public class ImageContainer extends JPanel {
     }
 
     public void setImage(File f) {
+        if (f == null) {
+            this.img = null;
+            return;
+        }
         BufferedImage img;
         try {
             img = ImageIO.read(f);
         } catch (IOException ex) {
             StackTracePrinter.handle(ex, "Failed to load vehicle image for " + f.getName());
-            img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+            this.img = null;
+            return;
         }
         setImage(img);
     }

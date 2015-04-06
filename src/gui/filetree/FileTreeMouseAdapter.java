@@ -25,14 +25,20 @@ public class FileTreeMouseAdapter extends MouseAdapter {
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mouseMoved(MouseEvent e) {
+  
+        int selRow = tree.getClosestRowForLocation(e.getX(), e.getY());
 
+        if (selRow == -1) {
+            return;
+        }
+        
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        int selRow = tree.getRowForLocation(e.getX(), e.getY());
+        int selRow = tree.getClosestRowForLocation(e.getX(), e.getY());
         if (selRow == -1) {
             return;
         }

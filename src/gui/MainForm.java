@@ -1,11 +1,14 @@
 package gui;
 
+import com.sun.java.swing.plaf.windows.WindowsTreeUI;
 import gui.editpanel.EditPanel;
 import gui.filetree.*;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.plaf.IconUIResource;
 import logic.*;
 import logic.dictionaries.Icons;
 import net.miginfocom.swing.MigLayout;
@@ -18,7 +21,8 @@ public class MainForm extends javax.swing.JFrame {
 
     private Logic logic;
     private final String currentPath = Settings.currentPath;
-    public FileTreeModel fileTreeModel;
+    private FileTreeModel fileTreeModel;
+    private JTree fileTree;
 
     private ImageContainer imageContainer;
 
@@ -64,10 +68,20 @@ public class MainForm extends javax.swing.JFrame {
     private void customInit() {
 
         initPictureContainer();
+        fileTree = new WTree(this);
+        fileTree.setRootVisible(false);
+        fileTree.setShowsRootHandles(true);
+        fileTree.setRowHeight(24);
+        fileTree.setCellRenderer(new FileTreeRenderer());
+        Font font = fileTree.getFont();
+        fileTree.setFont(new Font(font.getName(), font.getStyle(), font.getSize() + 4));
 
+        fileChooserContainer.setViewportView(fileTree);
         FileTreeModel treeModel = new FileTreeModel(new File(currentPath + "\\Files\\Default vehicles"));
         fileTree.setModel(treeModel);
-        fileTree.addMouseListener(new FileTreeMouseAdapter(fileTree, logic));
+        FileTreeMouseAdapter ml = new FileTreeMouseAdapter(fileTree, logic);
+        fileTree.addMouseListener(ml);
+        fileTree.addMouseMotionListener(ml);
         ToolTipManager.sharedInstance().registerComponent(fileTree);
 
         this.fileTreeModel = treeModel;
@@ -98,7 +112,6 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1 = new javax.swing.JSplitPane();
         fileChooserContainer = new javax.swing.JScrollPane();
-        fileTree = new javax.swing.JTree();
         mainPanel = new javax.swing.JPanel();
         modelContainer = new javax.swing.JPanel();
         panelContainer = new javax.swing.JTabbedPane();
@@ -120,16 +133,6 @@ public class MainForm extends javax.swing.JFrame {
 
         jSplitPane1.setDividerLocation(250);
         jSplitPane1.setContinuousLayout(true);
-
-        fileTree.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        fileTree.setModel(null);
-        fileTree.setCellRenderer(new FileTreeRenderer());
-        fileTree.setRootVisible(false);
-        fileTree.setRowHeight(22);
-        fileTree.setScrollsOnExpand(false);
-        fileTree.setShowsRootHandles(true);
-        fileChooserContainer.setViewportView(fileTree);
-
         jSplitPane1.setLeftComponent(fileChooserContainer);
 
         modelContainer.setPreferredSize(new java.awt.Dimension(756, 170));
@@ -138,7 +141,7 @@ public class MainForm extends javax.swing.JFrame {
         modelContainer.setLayout(modelContainerLayout);
         modelContainerLayout.setHorizontalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 756, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         modelContainerLayout.setVerticalGroup(
             modelContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -154,15 +157,15 @@ public class MainForm extends javax.swing.JFrame {
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(modelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 756, Short.MAX_VALUE)
+            .addComponent(modelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 686, Short.MAX_VALUE)
+            .addComponent(panelContainer)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(modelContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(panelContainer, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                .addComponent(panelContainer)
                 .addGap(0, 0, 0))
         );
 
@@ -209,11 +212,11 @@ public class MainForm extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1012, Short.MAX_VALUE)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 942, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
         );
 
         pack();
@@ -234,7 +237,7 @@ public class MainForm extends javax.swing.JFrame {
     public void setProject(Project project) {
         if (project == null) {
             panelContainer.removeAll();
-            imageContainer.setImage(new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB));
+            imageContainer.setImage((File) null);
             imageContainer.repaint();
             return;
         }
@@ -272,7 +275,7 @@ public class MainForm extends javax.swing.JFrame {
 
             p.store(out, null);
         } catch (IOException ex) {
-            
+
             StackTracePrinter.handle(ex);
         }
     }
@@ -306,8 +309,8 @@ public class MainForm extends javax.swing.JFrame {
 
         File tmp = new File(Settings.currentPath + "\\tmp");
         if (!tmp.exists()) {
-            if(!tmp.mkdir()){
-                StackTracePrinter.handle(new IOException("Failed to create "+tmp.getAbsolutePath()));
+            if (!tmp.mkdir()) {
+                StackTracePrinter.handle(new IOException("Failed to create " + tmp.getAbsolutePath()));
                 System.exit(3);
             }
         }
@@ -315,6 +318,9 @@ public class MainForm extends javax.swing.JFrame {
         try {
             MainForm.setDefaultLookAndFeelDecorated(true);
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            WindowsTreeUI ui = new WindowsTreeUI();
+            ui.setCollapsedIcon(null);
+
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             StackTracePrinter.handle(e);
         }
@@ -322,6 +328,9 @@ public class MainForm extends javax.swing.JFrame {
         setupGlobalExceptionHandling();
 
         UIManager.put("Tree.leafIcon", Icons.get("new"));
+        UIManager.put("Tree.collapsedIcon", Icons.get("new"));
+        UIManager.put("Tree.expandedIcon", Icons.get("new"));
+
         Logic logic = new Logic();
 
         java.awt.EventQueue.invokeLater(() -> {
@@ -341,7 +350,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JPanel editPanelContainer;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane fileChooserContainer;
-    private javax.swing.JTree fileTree;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;

@@ -160,7 +160,7 @@ public class EditPanel extends JPanel implements Scrollable {
     
     @Override
     public boolean getScrollableTracksViewportHeight() {
-        return false;
+        return this.getPreferredSize().height < this.getHeight();
     }
     
 }
