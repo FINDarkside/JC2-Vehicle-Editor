@@ -1,14 +1,11 @@
 package gui;
 
-import com.sun.java.swing.plaf.windows.WindowsTreeUI;
 import gui.editpanel.EditPanel;
 import gui.filetree.*;
 import java.awt.Font;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.plaf.IconUIResource;
 import logic.*;
 import logic.dictionaries.Icons;
 import net.miginfocom.swing.MigLayout;
@@ -68,7 +65,7 @@ public class MainForm extends javax.swing.JFrame {
     private void customInit() {
 
         initPictureContainer();
-        fileTree = new WTree(this);
+        fileTree = new WTree();
         fileTree.setRootVisible(false);
         fileTree.setShowsRootHandles(true);
         fileTree.setRowHeight(24);
@@ -318,8 +315,6 @@ public class MainForm extends javax.swing.JFrame {
         try {
             MainForm.setDefaultLookAndFeelDecorated(true);
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-            WindowsTreeUI ui = new WindowsTreeUI();
-            ui.setCollapsedIcon(null);
 
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             StackTracePrinter.handle(e);
@@ -328,8 +323,11 @@ public class MainForm extends javax.swing.JFrame {
         setupGlobalExceptionHandling();
 
         UIManager.put("Tree.leafIcon", Icons.get("new"));
-        UIManager.put("Tree.collapsedIcon", Icons.get("new"));
-        UIManager.put("Tree.expandedIcon", Icons.get("new"));
+        UIManager.put("Tree.collapsedIcon", Icons.get("collapsed"));
+        UIManager.put("Tree.expandedIcon", Icons.get("expanded"));
+
+        UIManager.put("Tree.paintLines", false);
+        UIManager.put("Tree.lineTypeDashed", false);
 
         Logic logic = new Logic();
 

@@ -23,11 +23,12 @@ public class StackTracePrinter {
     }
 
     public static void handle(Throwable t, String info) {
+        System.err.println(info);
         t.printStackTrace(System.err);
 
         Object[] options = {"Save stacktrace & copy to clipboard", "Continue"};
         int n = JOptionPane.showOptionDialog(null, (info.isEmpty() ? "" : info + System.lineSeparator())
-                + t.getClass().getSimpleName() + ": " + t.getMessage() ,
+                + t.getClass().getSimpleName() + ": " + t.getMessage(),
                 t.getClass().getSimpleName(),
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.ERROR_MESSAGE,

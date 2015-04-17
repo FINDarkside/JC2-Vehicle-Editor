@@ -7,7 +7,6 @@ package gui.filetree;
 
 import gui.MainForm;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import javax.swing.JTree;
@@ -22,9 +21,8 @@ public class WTree extends JTree {
     private final static Color selectedBorderColor = new Color(28, 156, 237);
     MainForm form;
 
-    public WTree(MainForm form) {
+    public WTree() {
         super();
-        this.form = form;
     }
 
     @Override
@@ -36,8 +34,6 @@ public class WTree extends JTree {
 
         // paint selected node's background and border
         int fromRow = getRowForPath(getSelectionPath());
-
-        System.out.println(form.getFocusOwner());
 
         if (fromRow != -1) {
             int toRow = fromRow + 1;
